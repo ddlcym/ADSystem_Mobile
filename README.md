@@ -1,1 +1,0 @@
-# ADSystem_Mobile
