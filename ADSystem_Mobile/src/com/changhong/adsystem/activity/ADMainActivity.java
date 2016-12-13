@@ -1,36 +1,64 @@
 package com.changhong.adsystem.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
+import com.android.volley.RequestQueue;
+import com.changhong.adsystem.http.VolleyTool;
 import com.changhong.adsystem_mobile.R;
 
-public class ADMainActivity extends Activity {
+public class ADMainActivity extends BaseActivity {
+	
+	private VolleyTool volleyTool;
+	private RequestQueue mReQueue;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ad_main);
 	}
+	
+	
+//	private void getChannelTypes(){
+//		String URL = processData.getTypes();
+//		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, URL, null,
+//				new Response.Listener<org.json.JSONObject>() {
+//
+//					@Override
+//					public void onResponse(org.json.JSONObject arg0) {
+//						// TODO Auto-generated method stub
+////						Log.i("mmmm", "MainActivity***getChannelTypes:" + arg0);
+//						channelTypes=HandleLiveData.getInstance().dealChannelTypes(arg0);
+//						if(channelTypes!=null){
+//							for(int i=0;i<channelTypes.size();i++){
+//								ChannelType type=channelTypes.get(i);
+//								List<ChannelInfo> list=new ArrayList<ChannelInfo>();
+//								allCategeChanels.add(list);
+//								allChanelsMap.put(type.getPramKey(), list);
+//								}
+//							}
+//						}
+//					}, errorListener);
+//		jsonObjectRequest.setTag(ADMainActivity.class.getSimpleName());// 设置tag,cancelAll的时候使用
+//		mReQueue.add(jsonObjectRequest);
+//	}
+
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.admain, menu);
-		return true;
+	protected void initView() {
+		// TODO Auto-generated method stub
+		
 	}
 
+
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
+	protected void initData() {
+		// TODO Auto-generated method stub
+		super.initData();
+		volleyTool = VolleyTool.getInstance();
+		mReQueue = volleyTool.getRequestQueue();
 	}
+	
+	
+
+
 }
