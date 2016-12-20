@@ -15,6 +15,8 @@ public class ADMainActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ad_main);
+		String a=null;
+		a.charAt(2);
 	}
 	
 	
