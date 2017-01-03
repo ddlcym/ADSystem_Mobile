@@ -52,20 +52,15 @@ public class SocketUtil {
 		return resultObject;
 	}
 
-	public static JsonSendModel constructRequestObject(
-			Map<String, Object> params) {
-
+	public static JsonSendModel constructRequestObject(Map<String, Object> params) {
 		JsonSendModel request = new JsonSendModel();
 		return request;
 	}
 
 	// 释放资源
-	public static void free() {
-
-	
+	public static void free() {	
 		SocketClient client = SocketClient.geInstance();
 		client.SocketClose();
-
 	}
 
 }
