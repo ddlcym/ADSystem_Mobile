@@ -18,8 +18,8 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import org.apache.http.conn.util.InetAddressUtils;
 import android.util.Log;
-import com.changhong.adsystem.mode.JsonObject;
-import com.changhong.adsystem.mode.JsonSendModel;
+import com.changhong.adsystem.model.JsonObject;
+import com.changhong.adsystem.model.JsonSendModel;
 
 public class SocketClient {
 

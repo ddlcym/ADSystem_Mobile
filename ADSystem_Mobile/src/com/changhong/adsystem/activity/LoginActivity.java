@@ -27,8 +27,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.changhong.adsystem.http.HttpRequest;
-import com.changhong.adsystem.modle.Class_Constant;
-import com.changhong.adsystem.modle.JsonResolve;
+import com.changhong.adsystem.model.Class_Constant;
+import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem_mobile.R;
 
 /**

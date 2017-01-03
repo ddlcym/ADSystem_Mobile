@@ -6,8 +6,8 @@ import java.util.Vector;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.changhong.adsystem.mode.JsonObject;
-import com.changhong.adsystem.mode.JsonSendModel;
+import com.changhong.adsystem.model.JsonObject;
+import com.changhong.adsystem.model.JsonSendModel;
 
 public class SocketUtil {
 

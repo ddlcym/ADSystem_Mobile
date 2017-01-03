@@ -13,7 +13,6 @@ public class HandleResponse {
     public final static String APP_VERSION = "appVersion";
     public final static String BUSINESS_TYPE = "businessType";
     public final static String REQUEST_BODY = "body";
-
     public final static String REQUEST_MAC = "mac";
 
     public final static String MESSAGE_TILE = "message";

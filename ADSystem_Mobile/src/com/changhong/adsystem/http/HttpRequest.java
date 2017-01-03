@@ -9,10 +9,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.changhong.adsystem.activity.ADMainActivity;
 import com.changhong.adsystem.activity.LoginActivity;
-import com.changhong.adsystem.modle.Class_Constant;
-import com.changhong.adsystem.modle.JsonResolve;
+import com.changhong.adsystem.model.Class_Constant;
 
 /**
  * @author cym
