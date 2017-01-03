@@ -1,8 +1,8 @@
 package com.changhong.adsystem.http;
 
 import com.alibaba.fastjson.JSONObject;
-import com.changhong.adsystem.modle.HandleResponse;
-import com.changhong.adsystem.modle.MobileBusiness;
+import com.changhong.adsystem.model.HandleResponse;
+import com.changhong.adsystem.model.MobileBusiness;
 import com.changhong.adsystem.utils.AesUtils;
 
 /** 
