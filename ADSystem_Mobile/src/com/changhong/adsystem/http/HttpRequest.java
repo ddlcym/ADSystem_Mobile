@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.changhong.adsystem.activity.LoginActivity;
 import com.changhong.adsystem.model.Class_Constant;
+import com.changhong.adsystem.utils.L;
 
 /**
  * @author cym
@@ -43,6 +44,7 @@ public class HttpRequest {
 
 	public void postSecurityCode(final Handler handler,String mobile) {
 		String URL = RequestURL.getSecurityCode(mobile);
+		L.d(URL);
 		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
 				Request.Method.POST, URL, null,
 				new Response.Listener<org.json.JSONObject>() {
@@ -58,8 +60,63 @@ public class HttpRequest {
 						handler.sendMessage(msg);
 					}
 				}, errorListener);
-		jsonObjectRequest.setTag(LoginActivity.class.getSimpleName());// 设置tag,cancelAll的时候使用
+		jsonObjectRequest.setTag(HttpRequest.class.getSimpleName());// 设置tag,cancelAll的时候使用
 		mReQueue.add(jsonObjectRequest);
+	}
+	
+	public void login(final Handler handler,String moblie,String securityCode){
+		String URL = RequestURL.getLoginURL(moblie,securityCode);
+		L.d(URL);
+		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+				Request.Method.POST, URL, null,
+				new Response.Listener<org.json.JSONObject>() {
+
+					@Override
+					public void onResponse(org.json.JSONObject arg0) {
+						// TODO Auto-generated method stub
+						// Log.i("mmmm", "HttpRequest***postSecurityCode:" +
+						// arg0);
+						Message msg=new Message();
+						msg.what=Class_Constant.POST_LOGIN;
+						msg.obj=arg0;
+						handler.sendMessage(msg);
+					}
+				}, errorListener);
+		jsonObjectRequest.setTag(HttpRequest.class.getSimpleName());// 设置tag,cancelAll的时候使用
+		mReQueue.add(jsonObjectRequest);
+	}
+	
+	/*
+	 * 根据关键字获取指定数量的小区列表
+	 * 
+	 * @param 
+	 * words 
+	 * 		the keywords of the residential
+	 * 
+	 * number 
+	 * 		the number of residential 
+	 */
+	public void getResidential(final Handler handler,String words,int number){
+		String URL = RequestURL.getResidential(words,number);
+		L.d(URL);
+		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+				Request.Method.POST, URL, null,
+				new Response.Listener<org.json.JSONObject>() {
+
+					@Override
+					public void onResponse(org.json.JSONObject arg0) {
+						// TODO Auto-generated method stub
+						 Log.i("mmmm", "HttpRequest***getResidential:" +
+						 arg0);
+						Message msg=new Message();
+						msg.what=Class_Constant.POST_LOGIN;
+						msg.obj=arg0;
+						handler.sendMessage(msg);
+					}
+				}, errorListener);
+		jsonObjectRequest.setTag(HttpRequest.class.getSimpleName());// 设置tag,cancelAll的时候使用
+		mReQueue.add(jsonObjectRequest);
+		
 	}
 
 	private Response.ErrorListener errorListener = new Response.ErrorListener() {

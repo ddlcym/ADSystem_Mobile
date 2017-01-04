@@ -9,6 +9,7 @@ public class Class_Constant {
 
 	public static final int  POST_SECURITYCODE_RESULT=1001;
 	public static final int  RECEIVE_SECURITYCODE=1002;
+	public static final int  POST_LOGIN=1003;
 	
 	
 	

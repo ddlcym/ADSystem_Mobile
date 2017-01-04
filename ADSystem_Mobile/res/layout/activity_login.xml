@@ -103,6 +103,7 @@
             android:layout_marginTop="30dp"
             android:background="#ff336699"
             android:gravity="center"
+            android:focusable="true"
             android:text="登录"
             android:textColor="@android:color/white" />
     </RelativeLayout>

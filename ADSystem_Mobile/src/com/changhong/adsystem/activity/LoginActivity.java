@@ -39,7 +39,7 @@ import com.changhong.adsystem_mobile.R;
  */
 public class LoginActivity extends Activity implements OnClickListener {
 	// 声明控件对象
-	private int secuCodeTime=60000;//间隔多少秒可以获取一次验证码
+	private int secuCodeTime=10000;//间隔多少秒可以获取一次验证码
 	
 	private EditText et_name, et_pass;
 	private Button mLoginButton;
@@ -59,7 +59,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	
 	private String patternCoder = "(?<!\\d)\\d{6}(?!\\d)";
 	private String mobile=null;//手机号
-	private String strContent;//验证码
+	private String strContent="1227";//验证码
 	
 	private BroadcastReceiver smsReceiver = new BroadcastReceiver() {
 		@Override
@@ -124,6 +124,15 @@ public class LoginActivity extends Activity implements OnClickListener {
 				et_pass.setText(strContent);
 				login();
 				break;
+			case Class_Constant.POST_LOGIN:
+				json=(JSONObject) msg.obj;
+				status=JsonResolve.getJsonObjInt(json, "status");
+				result=JsonResolve.getJsonObjectString(json, "message");
+				Toast.makeText(LoginActivity.this, result, Toast.LENGTH_SHORT).show();
+				if(1000==status){
+					login();
+				}
+				break;
 			}
 			super.handleMessage(msg);
 		}
@@ -184,7 +193,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (arg0.getId()) {
 		case R.id.login: // 登陆
-			login();
+			HttpRequest.getInstance().login(UiMangerHandler,mobile, strContent);
 
 			break;
 
