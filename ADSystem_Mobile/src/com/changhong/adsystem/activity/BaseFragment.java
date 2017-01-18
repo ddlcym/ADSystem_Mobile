@@ -1,0 +1,92 @@
+package com.changhong.adsystem.activity;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import com.changhong.adsystem_mobile.R;
+
+public abstract class BaseFragment extends Fragment implements OnClickListener {
+
+	protected Handler uiHander = null;
+	protected ProgressDialog mProgressDialog = null;
+    protected View mRootView=null;
+    protected Activity mActivity =null; 
+    
+
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+    	this.mActivity=getActivity();
+	}
+
+
+
+	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        if (null == mRootView) {
+            mRootView = inflater.inflate(getLayoutId(), container, false);
+        }
+        initViewAndEvent(mRootView);
+        return mRootView;
+    }
+	
+    
+
+	/**
+	 * 按键响应
+	 * 
+	 * @param keyCode
+	 * @param event
+	 * @return
+	 */
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		return false;
+	}
+
+	// 显示通讯等待进度条
+	protected void showProgressDialog() {
+		if (null == mProgressDialog) {
+			mProgressDialog = new ProgressDialog(getActivity());
+			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // 设置样式为圆形样式
+			mProgressDialog.setMessage(getResources().getString(
+					R.string.ab_progressdialog_notice));// 设置进度条的提示信息
+			mProgressDialog.setIcon(R.drawable.ic_launcher); // 设置进度条的图标
+			mProgressDialog.show();
+		}
+	}
+
+	/**
+	 * 隐藏进度条
+	 */
+	protected void hideProgressDialog() {
+		if (null != mProgressDialog) {
+			mProgressDialog.dismiss();
+			mProgressDialog = null;
+		}
+	}
+
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+	    //No call for super(). Bug on API Level > 11.
+	}
+	
+	
+	/**
+	 * 
+	 * 
+	 *********************************************抽象方法定义******************************************************/
+	protected abstract void initViewAndEvent(View v);
+	protected abstract int getLayoutId();
+
+}
