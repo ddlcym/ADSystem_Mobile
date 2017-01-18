@@ -71,6 +71,12 @@ public class HttpRequest {
 				Request.Method.POST, URL, null,
 				new Response.Listener<org.json.JSONObject>() {
 
+<<<<<<< .mine
+	
+	
+	
+||||||| .r26
+=======
 					@Override
 					public void onResponse(org.json.JSONObject arg0) {
 						// TODO Auto-generated method stub
@@ -119,6 +125,7 @@ public class HttpRequest {
 		
 	}
 
+>>>>>>> .r27
 	private Response.ErrorListener errorListener = new Response.ErrorListener() {
 		@Override
 		public void onErrorResponse(VolleyError arg0) {
