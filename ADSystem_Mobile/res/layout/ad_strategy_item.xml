@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+ 	        android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+       
+       <ImageView 
+ 	            android:id="@+id/ad_log"
+ 	            android:layout_width="wrap_content"
+ 	            android:layout_height="30dip"
+ 	            android:layout_marginLeft="10dp"	            
+ 	            android:src="@drawable/community_default"
+ 	            android:scaleType="centerInside"/>    
+            
+     <TextView 
+ 	            android:id="@+id/ad_name" 	           
+ 	            android:layout_width="0dp"
+ 	            android:layout_height="match_parent"
+ 	            android:layout_weight="1"	             	            
+ 	            android:textColor="@color/Grey_600"
+ 	            android:textSize="@dimen/FONT_SIZE_NORMAL"/> 
+
+    <!-- 广告详情 -->
+    
+    <RelativeLayout  android:layout_width="0dp"
+ 	            android:layout_height="match_parent"
+ 	            android:layout_weight="3">
+ 	            
+     <TextView 
+ 	            android:id="@+id/ad_startdate" 	           
+ 	            android:layout_width="wrap_content"
+ 	            android:layout_height="wrap_content"
+ 	            android:layout_alignParentLeft="true"   
+ 	            android:layout_alignParentTop="true"   
+ 	            android:layout_marginLeft="10dp" 
+ 	            android:layout_marginTop="10dp" 
+ 	            android:text="@string/ab_item_start_date"
+ 	            android:textColor="@color/Grey_600"
+ 	            android:textSize="@dimen/FONT_SIZE_NORMAL"/> 
+ 	 <TextView 
+ 	            android:id="@+id/ad_enddate" 	           
+ 	            android:layout_width="wrap_content"
+ 	            android:layout_height="wrap_content"
+ 	            android:layout_toRightOf="@id/ad_startdate" 	  
+ 	            android:layout_alignBaseline="@id/ad_startdate"   
+ 	            android:layout_marginLeft="10dp" 
+ 	            android:layout_marginTop="10dp" 
+ 	            android:text="@string/ab_item_end_date"	           	            
+ 	            android:textColor="@color/Grey_600"
+ 	            android:textSize="@dimen/FONT_SIZE_NORMAL"/> 
+ 	 <TextView 
+ 	            android:id="@+id/ad_filetype" 	           
+ 	            android:layout_width="wrap_content"
+ 	            android:layout_height="wrap_content"
+ 	            android:layout_alignParentLeft="true"   
+ 	            android:layout_alignParentBottom="true"   
+ 	            android:layout_marginLeft="10dp" 
+ 	            android:layout_marginBottom="10dp" 
+ 	            android:text="@string/ab_item_file_type"	           	                        	            
+ 	            android:textColor="@color/Grey_600"
+ 	            android:textSize="@dimen/FONT_SIZE_NORMAL"/> 
+ 	 <TextView 
+ 	            android:id="@+id/ad_repeat" 	           
+ 	            android:layout_width="wrap_content"
+ 	            android:layout_height="wrap_content"
+ 	            android:layout_toRightOf="@id/ad_filetype" 	  
+ 	            android:layout_alignBaseline="@id/ad_filetype"   
+ 	            android:layout_marginLeft="10dp" 
+ 	            android:layout_marginTop="10dp" 
+ 	            android:text="@string/ad_item_repeat"	           	                        	             	            	            
+ 	            android:textColor="@color/Grey_600"
+ 	            android:textSize="@dimen/FONT_SIZE_NORMAL"/> 
+        
+   </RelativeLayout>
+    
+</LinearLayout>
+
+
+

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="38dip"
+            android:layout_margin="3dp" >
+
+            <!-- 中间内容 -->
+
+            <RelativeLayout android:id="@+id/search_notice"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/search_bg"
+                android:visibility="gone">
+
+                <View
+                    android:id="@+id/search_center"
+                    android:layout_width="1dp"
+                    android:layout_height="1dp"
+                    android:layout_centerInParent="true" />
+
+                <ImageView
+                    android:id="@+id/search_log"
+                    android:layout_width="wrap_content"
+                    android:layout_height="26dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/search_center"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/search" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@id/search_center"
+                    android:gravity="center_vertical"
+                    android:text="@string/ab_community_search"
+                    android:textColor="@color/Grey_600"
+                    android:textSize="@dimen/FONT_SIZE_SMALL" />
+            </RelativeLayout>
+                
+                <LinearLayout android:id="@+id/search_inputbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/search_input"
+                        android:layout_width="0dip"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="15dp"
+                        android:hint="长虹科技大厦"
+                        android:textSize="16sp"
+                        android:textColorHint="@color/grey"
+                        android:background="@drawable/input_bg"
+                        android:paddingLeft="10dip"
+                        android:paddingRight="10dip" />
+
+                    <Button
+                        android:id="@+id/search_submit"
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/searchbtn"
+                        android:text="搜索"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+        </FrameLayout>
+
+        <ListView
+            android:id="@+id/community_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_marginTop="10dp"
+            android:layout_weight="8"
+            android:listSelector="@drawable/btn_bg_selector" />
+    </LinearLayout>
+
+
+</RelativeLayout>
