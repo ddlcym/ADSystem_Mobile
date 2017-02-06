@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<resources> 
+    <string-array name="tabs">
+        <item>小区列表</item>
+        <item>设备信息</item>
+    </string-array>
+</resources>
