@@ -20,7 +20,6 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
 	protected ProgressDialog mProgressDialog = null;
     protected View mRootView=null;
     protected Activity mActivity =null; 
-    
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,6 +40,32 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
     }
 	
     
+	
+	
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+	}
+
+
+
+	@Override
+	public void onResume() {
+        matchTabHost(getLayoutId());
+		super.onResume();
+	}
+
+
 
 	/**
 	 * 按键响应
@@ -74,6 +99,19 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
 			mProgressDialog = null;
 		}
 	}
+	
+	private void matchTabHost(int layoutID){
+	
+		if(-1 == layoutID)return;		
+		if (mActivity instanceof ADMainActivity) {
+			if(R.layout.fragment_ad_strategy == layoutID){
+			   ((ADMainActivity)mActivity).hideTabHost();
+			}else{
+			   ((ADMainActivity)mActivity).showTabHost();	
+			}
+		}
+	}
+
 
 	
 	@Override

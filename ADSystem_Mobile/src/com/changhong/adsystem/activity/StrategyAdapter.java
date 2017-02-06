@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ public class StrategyAdapter extends BaseAdapter {
     public StrategyAdapter(Context context, List<String> strategyList) {
         this.minflater = LayoutInflater.from(context);
         this.strategyList = strategyList;
+        
     }
     /**
      * 更新数据，更新list后在调用notifyDataSetChanged()
@@ -58,21 +60,31 @@ public class StrategyAdapter extends BaseAdapter {
         if (convertView == null) {
             vh = new ViewHolder();
             convertView = minflater.inflate(R.layout.ad_strategy_item, null); 
-            vh.Name = (TextView)convertView.findViewById(R.id.item_name);
+            vh.log = (ImageView)convertView.findViewById(R.id.ad_log);
+            vh.name = (TextView)convertView.findViewById(R.id.ad_name);
+            vh.startDate = (TextView)convertView.findViewById(R.id.ad_startdate);
+            vh.endDate = (TextView)convertView.findViewById(R.id.ad_enddate);
+            vh.type = (TextView)convertView.findViewById(R.id.ad_name);
+
             convertView.setTag(vh);
         } else {
             vh = (ViewHolder) convertView.getTag();
         }
         
         if(strategyList.get(position)!=null){
-        	vh.Name.setText(""+strategyList.get(position));
+        	vh.name.setText(""+strategyList.get(position));
         }else{
-        	vh.Name.setText("未定义");
+        	vh.name.setText("未定义");
         }        
         return convertView;
     }
 
    class ViewHolder {
-        public TextView Name;
+	    ImageView log;
+        TextView name;
+        TextView startDate;
+        TextView endDate;
+        TextView type;
+        TextView repeat;
     }
 }

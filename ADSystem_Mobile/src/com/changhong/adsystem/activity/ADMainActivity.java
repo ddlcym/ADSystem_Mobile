@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.AbsoluteLayout.LayoutParams;
+import android.widget.LinearLayout;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
@@ -63,16 +64,12 @@ public class ADMainActivity extends FragmentActivity {
 		return view;
 	}
 
-    private void hideTabHost(){
-    	LayoutParams params=(LayoutParams) mTabHost.getLayoutParams();
-    	params.height=0;
-    	mTabHost.setLayoutParams(params);
+    public void hideTabHost(){
+    	mTabHost.getTabWidget().setVisibility(View.GONE);
     }
     
-    private void showTabHost(){
-    	LayoutParams params=(LayoutParams) mTabHost.getLayoutParams();
-    	params.height=LayoutParams.WRAP_CONTENT;
-    	mTabHost.setLayoutParams(params);
+    public void showTabHost(){
+    	mTabHost.getTabWidget().setVisibility(View.VISIBLE);
     }
 
 	@Override

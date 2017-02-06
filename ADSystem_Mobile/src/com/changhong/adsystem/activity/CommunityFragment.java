@@ -118,7 +118,7 @@ public class CommunityFragment extends BaseFragment {
 	 */
 	private void searchStrategy(String key) {
 		showProgressDialog();
-		uiHander.sendEmptyMessageDelayed(STRATEGY_HIDE_PROGRESSDIALOG, 30000);
+		uiHander.sendEmptyMessageDelayed(STRATEGY_HIDE_PROGRESSDIALOG, 5000);
 	}
 
 

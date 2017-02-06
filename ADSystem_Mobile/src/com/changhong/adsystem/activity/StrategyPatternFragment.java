@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import com.changhong.adsystem_mobile.R;
 
@@ -39,9 +40,10 @@ public class StrategyPatternFragment extends BaseFragment {
 	@Override
 	protected void initViewAndEvent(View v ) {
 		mStrategyList = (ListView) v.findViewById(R.id.strategy_list);
+
 		// 小区列表
 		List<String> strategyList = getStrategyList();
-		mStrategyAdapter = new StrategyAdapter(getActivity(), strategyList);
+		mStrategyAdapter = new StrategyAdapter(mActivity, strategyList);
 		mStrategyList.setAdapter(mStrategyAdapter);
 		mStrategyList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -51,9 +53,9 @@ public class StrategyPatternFragment extends BaseFragment {
 				// 进入广告策略页面
 			}
 		});
-	
+	    
 		v.findViewById(R.id.btn_update).setOnClickListener(this);
-		v.findViewById(R.id.btn_download).setOnClickListener(this);
+		v.findViewById(R.id.btn_commit).setOnClickListener(this);
 
 		uiHander = new Handler() {
 			@Override
@@ -69,10 +71,8 @@ public class StrategyPatternFragment extends BaseFragment {
 					break;
 				default:
 					break;
-
 				}
 			}
-
 		};
 		//获取小区的广告策略
 		requestStrategy(communityID);
@@ -97,7 +97,7 @@ public class StrategyPatternFragment extends BaseFragment {
 	 */
 	private void requestStrategy(int communityID) {
 		showProgressDialog();
-		uiHander.sendEmptyMessageDelayed(STRATEGY_HIDE_PROGRESSDIALOG, 30000);
+		uiHander.sendEmptyMessageDelayed(STRATEGY_HIDE_PROGRESSDIALOG, 6000);
 	}
 
 	
@@ -112,11 +112,10 @@ public class StrategyPatternFragment extends BaseFragment {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.btn_update://上传数据
+		case R.id.btn_commit://上传数据
 			//弹出输入对话框
 			break;
-		case R.id.btn_download://下载数据
-
+		case R.id.btn_update://下载数据
 //			searchStrategy(key);
 			break;
 		
