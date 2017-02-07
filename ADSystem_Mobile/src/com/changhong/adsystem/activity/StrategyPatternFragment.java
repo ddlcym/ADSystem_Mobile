@@ -2,6 +2,9 @@ package com.changhong.adsystem.activity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONObject;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,7 +19,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.changhong.adsystem.model.Class_Constant;
+import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.utils.AdDetail;
+import com.changhong.adsystem.utils.AesUtils;
+import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem_mobile.R;
 
 public class StrategyPatternFragment extends BaseFragment {
@@ -59,17 +66,26 @@ public class StrategyPatternFragment extends BaseFragment {
 			@Override
 			public void handleMessage(Message msg) {
 				switch (msg.what) {
-				case STRATEGY_ADAPTER_UPDATE:
-					mStrategyAdapter.updateList(null);
+				case Class_Constant.REQUEST_COMMUNITY:
+					hideProgressDialog();
+					JSONObject json = (JSONObject) msg.obj;
+					int status = JsonResolve.getJsonObjInt(json, "status");
+					String respond = JsonResolve.getJsonObjectString(json,
+							"body");
+//					if (1000 == status) {
+//						mCommunityInfors = JsonResolve.getComunnitys(AesUtils
+//								.fixDecrypt(respond));
+//						mCommunityAdapter.updateList(mCommunityInfors);
+//					}
+
 					break;
-				case STRATEGY_SHOW_PROGRESSDIALOG:
-					break;
-				case STRATEGY_HIDE_PROGRESSDIALOG:
+				case Class_Constant.POST_HIDE_PROGRESSDIALOG:
 					hideProgressDialog();
 					break;
 				default:
 					break;
-				}
+
+				}				
 			}
 		};
 		//获取小区的广告策略
@@ -99,7 +115,9 @@ public class StrategyPatternFragment extends BaseFragment {
 	 */
 	private void requestStrategy(String communityID) {
 		showProgressDialog();
-		uiHander.sendEmptyMessageDelayed(STRATEGY_HIDE_PROGRESSDIALOG, 6000);
+		uiHander.sendEmptyMessageDelayed(
+				Class_Constant.POST_HIDE_PROGRESSDIALOG,
+				Configure.HTTP_MAX_WATING_TIME);
 	}
 
 	

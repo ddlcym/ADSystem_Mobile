@@ -96,7 +96,7 @@ public class HttpRequest {
 	 * 		the number of community 
 	 */
 	public void getCommunityList(final Handler handler,String words,int number){
-		String URL = RequestURL.getResidential(words,number);
+		String URL = RequestURL.getCommunity(words,number);
 		L.d(URL);
 		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
 				Request.Method.POST, URL, null,
@@ -119,8 +119,8 @@ public class HttpRequest {
 	}
 	
 	
-	public void getStrategyPatternByID(final Handler handler,int comId){
-		String URL = RequestURL.getCommunity(words,number);
+	public void getStrategyPatternByID(final Handler handler,String comId){
+		String URL = RequestURL.getStrategyPattern(comId);
 		L.d(URL);
 		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
 				Request.Method.POST, URL, null,
