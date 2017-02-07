@@ -9,6 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.changhong.adsystem.utils.AdStrategyPattern;
+
 import android.util.Log;
 
 
@@ -53,6 +55,46 @@ public class JsonResolve {
 		}
 			
 		return communitylist; 
+	}
+	
+	public String id;//设备ID
+	public int defaultDuration;//默认播放持续时间
+	public int uuid;//资源id	
+	public int index;	//播放序列
+	public String advertiser;	//名称
+	public String agency;	    //代理
+	public int  duration;//持续时长
+	public String minetype;//资源类型
+	public int repeat;//重复次数
+	public String url;	//资源请求路径
+	
+	public static List<AdStrategyPattern> getStrategyPatterns(String jsonStr){
+		List strategyPatterns= new ArrayList<AdStrategyPattern>();
+		if(null == jsonStr)return strategyPatterns;
+		try {
+			JSONObject json = new JSONObject(jsonStr);
+			String devID=getJsonObjectString(json,"ID");
+			int defaultDuration=getJsonObjInt(json,"defaultDuration");
+			JSONArray array=getJsonObjectArray(json,"playList");			
+			int size=(null == array)?0:array.length();
+			for (int i = 0; i <size; i++) {
+				JSONObject itemObj=array.getJSONObject(i);
+				AdStrategyPattern adStrat=new AdStrategyPattern();
+				adStrat.id=devID;
+				adStrat.defaultDuration=defaultDuration;
+				adStrat.uuid=getJsonObjectString(itemObj,"uuid");
+				adStrat.index=getJsonObjInt(itemObj,"index");
+				adStrat.advertiser=getJsonObjectString(itemObj,"advertiser");
+				adStrat.agency=getJsonObjectString(itemObj,"agency");
+				adStrat.duration=getJsonObjInt(itemObj,"duration");
+				adStrat.repeat=getJsonObjInt(itemObj,"repeat");
+				adStrat.url=getJsonObjectString(itemObj,"url");
+				strategyPatterns.add(adStrat);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}			
+		return strategyPatterns; 
 	}
 	
 	

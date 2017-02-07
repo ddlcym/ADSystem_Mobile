@@ -2,9 +2,7 @@ package com.changhong.adsystem.activity;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.json.JSONObject;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,10 +16,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
-
 import com.changhong.adsystem.model.Class_Constant;
 import com.changhong.adsystem.model.JsonResolve;
-import com.changhong.adsystem.utils.AdDetail;
+import com.changhong.adsystem.utils.AdStrategyPattern;
 import com.changhong.adsystem.utils.AesUtils;
 import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem_mobile.R;
@@ -31,7 +28,7 @@ public class StrategyPatternFragment extends BaseFragment {
 	//视图定义
 	ListView mStrategyList = null;
 	StrategyAdapter mStrategyAdapter = null;
-
+	List<AdStrategyPattern> mAdSPs =new ArrayList<AdStrategyPattern>();
 	private String communityID;
 	public StrategyPatternFragment(String communityID){
 		this.communityID=communityID;
@@ -46,9 +43,7 @@ public class StrategyPatternFragment extends BaseFragment {
 	@Override
 	protected void initViewAndEvent(View v ) {
 		mStrategyList = (ListView) v.findViewById(R.id.strategy_list);
-		// 小区列表
-		List<AdDetail> strategyList = getStrategyList();
-		mStrategyAdapter = new StrategyAdapter(mActivity, strategyList);
+		mStrategyAdapter = new StrategyAdapter(mActivity, mAdSPs);
 		mStrategyList.setAdapter(mStrategyAdapter);
 		mStrategyList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -66,17 +61,15 @@ public class StrategyPatternFragment extends BaseFragment {
 			@Override
 			public void handleMessage(Message msg) {
 				switch (msg.what) {
-				case Class_Constant.REQUEST_COMMUNITY:
+				case Class_Constant.REQUEST_STRATEPATTERN:
 					hideProgressDialog();
 					JSONObject json = (JSONObject) msg.obj;
 					int status = JsonResolve.getJsonObjInt(json, "status");
-					String respond = JsonResolve.getJsonObjectString(json,
-							"body");
-//					if (1000 == status) {
-//						mCommunityInfors = JsonResolve.getComunnitys(AesUtils
-//								.fixDecrypt(respond));
-//						mCommunityAdapter.updateList(mCommunityInfors);
-//					}
+					String respond = JsonResolve.getJsonObjectString(json,"body");
+					if (1000 == status) {
+						mAdSPs = JsonResolve.getStrategyPatterns(AesUtils.fixDecrypt(respond));
+						mStrategyAdapter.updateList(mAdSPs);
+					}
 
 					break;
 				case Class_Constant.POST_HIDE_PROGRESSDIALOG:
@@ -92,21 +85,7 @@ public class StrategyPatternFragment extends BaseFragment {
 		requestStrategy(communityID);
 	}
 
-	private List<AdDetail> getStrategyList() {
-		List<AdDetail> dataList = new ArrayList<AdDetail>();
-		
-		for (int j = 0; j < 10; j++) {		
-			AdDetail oneAD=new AdDetail();
-			oneAD.name="广告"+j;
-			oneAD.adImagePath="data/ad/strategy/ad1";
-			oneAD.startDate="2017-02-06";
-			oneAD.endDate="2017-06-06";
-			oneAD.adType=".png";
-			oneAD.repeat="3";
-			dataList.add(oneAD);
-		}
-		return dataList;
-	}
+
 
 	/**
 	 * 根据关键字搜索小区
@@ -115,6 +94,7 @@ public class StrategyPatternFragment extends BaseFragment {
 	 */
 	private void requestStrategy(String communityID) {
 		showProgressDialog();
+		mHttpRequest.getStrategyPatternByID(uiHander, communityID);
 		uiHander.sendEmptyMessageDelayed(
 				Class_Constant.POST_HIDE_PROGRESSDIALOG,
 				Configure.HTTP_MAX_WATING_TIME);

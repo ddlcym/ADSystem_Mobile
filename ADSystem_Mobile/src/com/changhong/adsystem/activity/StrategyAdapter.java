@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
-import com.changhong.adsystem.utils.AdDetail;
+import com.changhong.adsystem.utils.AdStrategyPattern;
 import com.changhong.adsystem_mobile.R;
 import com.changhong.common.system.MyApplication;
 
@@ -17,10 +17,10 @@ public class StrategyAdapter extends BaseAdapter {
 
 	private LayoutInflater minflater;
 
-	private List<AdDetail> strategyList;
+	private List<AdStrategyPattern> strategyList;
 	private Resources res;
 
-	public StrategyAdapter(Context context, List<AdDetail> strategyList) {
+	public StrategyAdapter(Context context, List<AdStrategyPattern> strategyList) {
 		this.minflater = LayoutInflater.from(context);
 		this.strategyList = strategyList;
 		res=context.getResources();
@@ -32,7 +32,7 @@ public class StrategyAdapter extends BaseAdapter {
 	 * 
 	 * @param ipList
 	 */
-	public void updateList(List<AdDetail> strategyList) {
+	public void updateList(List<AdStrategyPattern> strategyList) {
 		if (null != strategyList) {
 			this.strategyList = strategyList;
 			notifyDataSetChanged();
@@ -62,11 +62,11 @@ public class StrategyAdapter extends BaseAdapter {
 			vh = new ViewHolder();
 			convertView = minflater.inflate(R.layout.ad_strategy_item, null);
 			vh.index = (TextView) convertView.findViewById(R.id.ad_index);
-			vh.adImage = (ImageView) convertView.findViewById(R.id.ad_log);
+			vh.adLog = (ImageView) convertView.findViewById(R.id.ad_log);
 			vh.name = (TextView) convertView.findViewById(R.id.ad_name);
 //			vh.startDate = (TextView) convertView.findViewById(R.id.ad_startdate);
 			vh.endDate = (TextView) convertView.findViewById(R.id.ad_enddate);
-			vh.type = (TextView) convertView.findViewById(R.id.ad_filetype);
+			vh.adType = (TextView) convertView.findViewById(R.id.ad_filetype);
 			vh.repeat = (TextView) convertView.findViewById(R.id.ad_repeat);
 
 			convertView.setTag(vh);
@@ -75,25 +75,22 @@ public class StrategyAdapter extends BaseAdapter {
 		}
 
 		vh.index.setText((position+1)+"");
-		AdDetail oneAd = strategyList.get(position);
+		AdStrategyPattern oneAd = strategyList.get(position);
 		if (oneAd != null) {
-			vh.name.setText("" + oneAd.name);
-//			vh.startDate.setText(res.getString(R.string.ab_item_start_date) + oneAd.startDate);
-			vh.endDate.setText(res.getString(R.string.ab_item_end_date) + oneAd.startDate);
-			vh.type.setText(res.getString(R.string.ab_item_file_type) + oneAd.adType);
+			vh.name.setText("" + oneAd.advertiser);
+			vh.endDate.setText(res.getString(R.string.ab_item_end_date) + oneAd.endDate);
+			vh.adType.setText(res.getString(R.string.ab_item_file_type) + oneAd.minetype);
 			vh.repeat.setText(res.getString(R.string.ad_item_repeat) + oneAd.repeat);
 
-			if (!oneAd.adImagePath.equals("")) {
+			if (!oneAd.url.equals("")) {
 				MyApplication.imageLoader.displayImage("file://"
-						+ oneAd.adImagePath, vh.adImage,
-						MyApplication.viewOptions);
+						+ oneAd.url, vh.adLog,MyApplication.viewOptions);
 			}
 
 		} else {
 			vh.name.setText("未定义");
-			vh.startDate.setText("00-00-00");
 			vh.endDate.setText("00-00-00");
-			vh.type.setText("");
+			vh.adType.setText("");
 			vh.repeat.setText("0");
 		}
 
@@ -102,11 +99,11 @@ public class StrategyAdapter extends BaseAdapter {
 
 	class ViewHolder {
 		TextView index;
-		ImageView adImage;
+		ImageView adLog;
 		TextView name;
-		TextView startDate;
+		TextView agency;
 		TextView endDate;
-		TextView type;
-		TextView repeat;
+		TextView adType;
+		TextView repeat;		
 	}
 }
