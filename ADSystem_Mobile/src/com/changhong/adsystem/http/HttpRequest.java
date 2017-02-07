@@ -90,12 +90,12 @@ public class HttpRequest {
 	 * 
 	 * @param 
 	 * words 
-	 * 		the keywords of the residential
+	 * 		the keywords of the community
 	 * 
 	 * number 
-	 * 		the number of residential 
+	 * 		the number of community 
 	 */
-	public void getResidential(final Handler handler,String words,int number){
+	public void getCommunityList(final Handler handler,String words,int number){
 		String URL = RequestURL.getResidential(words,number);
 		L.d(URL);
 		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -108,7 +108,7 @@ public class HttpRequest {
 						 Log.i("mmmm", "HttpRequest***getResidential:" +
 						 arg0);
 						Message msg=new Message();
-						msg.what=Class_Constant.POST_LOGIN;
+						msg.what=Class_Constant.REQUEST_COMMUNITY;
 						msg.obj=arg0;
 						handler.sendMessage(msg);
 					}

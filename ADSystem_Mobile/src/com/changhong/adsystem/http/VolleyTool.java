@@ -3,6 +3,7 @@ package com.changhong.adsystem.http;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.changhong.adsystem.activity.MyApp;
+import com.changhong.common.system.MyApplication;
 
 
 
@@ -21,7 +22,7 @@ public class VolleyTool {
 	
 	public VolleyTool(){
 		if(null==requestQueue){
-			requestQueue=Volley.newRequestQueue(MyApp.getContext());
+			requestQueue=Volley.newRequestQueue(MyApplication.getContext());
 		}
 	}
 	

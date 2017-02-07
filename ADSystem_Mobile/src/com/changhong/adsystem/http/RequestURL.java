@@ -14,14 +14,16 @@ import com.changhong.adsystem.utils.AesUtils;
  * @parameter
  */
 public class RequestURL {
+	private static String serverIP = "http://192.168.1.115:8080/";
 //	private static String serverIP = "http://192.168.1.101:8080/";
 //	// 验证码请求地址
-//	private static String requestParamsURL = serverIP
-//			+ "adplatform/mobile/resource.html?json=";
-	//test
-	private static String serverIP = "http://192.168.1.101:8082/";
 	private static String requestParamsURL = serverIP
-			+ "adplatform/backend/index.html?json=";
+			+ "adplatform/mobile/resource.html?json=";
+	//test    	
+
+//	private static String serverIP = "http://192.168.1.101:8082/";
+//	private static String requestParamsURL = serverIP
+//			+ "adplatform/backend/index.html?json=";
 
 	public static String getSecurityCode(String mobile) {
 		JSONObject request = new JSONObject();
@@ -51,7 +53,6 @@ public class RequestURL {
 		body.put("code", securityCode);
 		request.put(HandleResponse.REQUEST_BODY,
 				AesUtils.fixEncrypt(body.toJSONString()));
-
 		return requestParamsURL + request.toJSONString();
 	}
 
@@ -66,7 +67,7 @@ public class RequestURL {
 	 * 		the number of residential 
 	 */
 	public static String getResidential(String words, int number) {
-		if(TextUtils.isEmpty(words)||number<0){
+		if(null == words||number<0){
 			return "";
 		}
 		JSONObject request = new JSONObject();

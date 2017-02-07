@@ -7,10 +7,14 @@ package com.changhong.adsystem.model;
  */
 public class Class_Constant {
 
+	public static final int  POST_SHOW_PROGRESSDIALOG=0;
+	public static final int  POST_HIDE_PROGRESSDIALOG=1;
+
+	
 	public static final int  POST_SECURITYCODE_RESULT=1001;
 	public static final int  RECEIVE_SECURITYCODE=1002;
-	public static final int  POST_LOGIN=1003;
-	
-	
+	public static final int  POST_LOGIN=1003;	
+	public static final int  REQUEST_COMMUNITY=1004;
+
 	
 }

@@ -1,5 +1,10 @@
 package com.changhong.adsystem.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,9 +22,7 @@ public class JsonResolve {
 
 	
 	public static String resolveSecurityCode(JSONObject json){
-		String result=getJsonObjectString(json,"message");
-		
-		
+		String result=getJsonObjectString(json,"message");		
 		return result;
 	}
 	
@@ -30,7 +33,27 @@ public class JsonResolve {
 	
 	
 	
-	
+	public static List<CommunityInfor> getComunnitys(String jsonStr){
+		List communitylist= new ArrayList<CommunityInfor>();
+		if(null == jsonStr)return communitylist;
+		try {
+			JSONObject json = new JSONObject(jsonStr);
+			JSONArray array=getJsonObjectArray(json,"communities");
+			int size=(null == array)?0:array.length();
+			for (int i = 0; i <size; i++) {
+				JSONObject itemObj=array.getJSONObject(i);
+				CommunityInfor comm=new CommunityInfor();
+				comm.comID=getJsonObjectString(itemObj,"id");
+				comm.comName=getJsonObjectString(itemObj,"name");
+				comm.comLocation=getJsonObjectString(itemObj,"location");
+				communitylist.add(comm);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+			
+		return communitylist; 
+	}
 	
 	
 	//======================================捕获json解析异常=========================

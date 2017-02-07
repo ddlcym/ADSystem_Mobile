@@ -15,6 +15,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
+
+import com.changhong.adsystem.utils.AdDetail;
 import com.changhong.adsystem_mobile.R;
 
 public class StrategyPatternFragment extends BaseFragment {
@@ -26,8 +28,8 @@ public class StrategyPatternFragment extends BaseFragment {
 	private static final int STRATEGY_ADAPTER_UPDATE = 0;
 	private static final int STRATEGY_SHOW_PROGRESSDIALOG = 1;
 	private static final int STRATEGY_HIDE_PROGRESSDIALOG = 2;
-	private int communityID;
-	public StrategyPatternFragment(int communityID){
+	private String communityID;
+	public StrategyPatternFragment(String communityID){
 		this.communityID=communityID;
 	}
 
@@ -40,9 +42,8 @@ public class StrategyPatternFragment extends BaseFragment {
 	@Override
 	protected void initViewAndEvent(View v ) {
 		mStrategyList = (ListView) v.findViewById(R.id.strategy_list);
-
 		// 小区列表
-		List<String> strategyList = getStrategyList();
+		List<AdDetail> strategyList = getStrategyList();
 		mStrategyAdapter = new StrategyAdapter(mActivity, strategyList);
 		mStrategyList.setAdapter(mStrategyAdapter);
 		mStrategyList.setOnItemClickListener(new OnItemClickListener() {
@@ -78,15 +79,19 @@ public class StrategyPatternFragment extends BaseFragment {
 		requestStrategy(communityID);
 	}
 
-	private List<String> getStrategyList() {
-		List<String> dataList = new ArrayList<String>();
-		dataList.add("长虹智能一区");
-		dataList.add("长虹智能二区");
-		dataList.add("长虹智能三区");
-		dataList.add("长虹智能四区");
-		dataList.add("长虹智能五区");
-		dataList.add("长虹智能六区");
-		dataList.add("长虹智能七区");
+	private List<AdDetail> getStrategyList() {
+		List<AdDetail> dataList = new ArrayList<AdDetail>();
+		
+		for (int j = 0; j < 10; j++) {		
+			AdDetail oneAD=new AdDetail();
+			oneAD.name="广告"+j;
+			oneAD.adImagePath="data/ad/strategy/ad1";
+			oneAD.startDate="2017-02-06";
+			oneAD.endDate="2017-06-06";
+			oneAD.adType=".png";
+			oneAD.repeat="3";
+			dataList.add(oneAD);
+		}
 		return dataList;
 	}
 
@@ -95,7 +100,7 @@ public class StrategyPatternFragment extends BaseFragment {
 	 * 
 	 * @param key
 	 */
-	private void requestStrategy(int communityID) {
+	private void requestStrategy(String communityID) {
 		showProgressDialog();
 		uiHander.sendEmptyMessageDelayed(STRATEGY_HIDE_PROGRESSDIALOG, 6000);
 	}

@@ -5,13 +5,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+
+import com.changhong.adsystem.http.HttpRequest;
 import com.changhong.adsystem_mobile.R;
 
 public abstract class BaseFragment extends Fragment implements OnClickListener {
@@ -20,11 +21,13 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
 	protected ProgressDialog mProgressDialog = null;
     protected View mRootView=null;
     protected Activity mActivity =null; 
+    protected HttpRequest mHttpRequest=null;
 
 	@Override
-	public void onCreate(@Nullable Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
     	this.mActivity=getActivity();
+    	mHttpRequest=HttpRequest.getInstance();
 	}
 
 

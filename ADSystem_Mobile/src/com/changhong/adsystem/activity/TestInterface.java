@@ -38,7 +38,7 @@ public class TestInterface extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.test_layout);
-		HttpRequest.getInstance().getResidential(handle, "", 10);
+		HttpRequest.getInstance().getCommunityList(handle, "", 10);
 	}
 
 }

@@ -1,36 +1,41 @@
 package com.changhong.adsystem.activity;
 
-import java.util.ArrayList;
 import java.util.List;
-import android.os.Bundle;
+
+import org.json.JSONObject;
+
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import com.changhong.adsystem.model.Class_Constant;
 import com.changhong.adsystem.model.CommunityInfor;
+import com.changhong.adsystem.model.JsonResolve;
+import com.changhong.adsystem.utils.AesUtils;
+import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem_mobile.R;
 
 public class CommunityFragment extends BaseFragment {
 
-	ListView mStrategyList = null;
+	protected static final String Tag = "CommunityFragment";
+
+	// View定义
+	ListView mCommunityList = null;
 	RelativeLayout mSearchNotice = null;
-	LinearLayout mSearchBox=null;
+	LinearLayout mSearchBox = null, mRefreshBox;
 	EditText mSearchKey = null;
-	CommunityAdapter mCommunityAdapter = null;	
-	List<CommunityInfor> mCommunityInfors=null;
-	
-	private static final int STRATEGY_ADAPTER_UPDATE = 0;
-	private static final int STRATEGY_SHOW_PROGRESSDIALOG = 1;
-	private static final int STRATEGY_HIDE_PROGRESSDIALOG = 2;
+   
+	//小区列表显示适配器
+	CommunityAdapter mCommunityAdapter = null;
+	List<CommunityInfor> mCommunityInfors = null;
 
 	@Override
 	protected int getLayoutId() {
@@ -38,49 +43,66 @@ public class CommunityFragment extends BaseFragment {
 	}
 
 	@Override
-	protected void initViewAndEvent(View v ) {
+	protected void initViewAndEvent(View v) {
 
-		mStrategyList = (ListView) v.findViewById(R.id.community_list);
+		mCommunityList = (ListView) v.findViewById(R.id.community_list);
 		mSearchNotice = (RelativeLayout) v.findViewById(R.id.search_notice);
 		mSearchBox = (LinearLayout) v.findViewById(R.id.search_inputbox);
+		mRefreshBox = (LinearLayout) v.findViewById(R.id.refresh_box);
 		mSearchKey = (EditText) v.findViewById(R.id.search_input);
 
 		// 小区列表
-		fillCommunityInfors();
-		mCommunityAdapter = new CommunityAdapter(getActivity(), mCommunityInfors);
-		mStrategyList.setAdapter(mCommunityAdapter);
-		mStrategyList.setOnItemClickListener(new OnItemClickListener() {
+		mCommunityAdapter = new CommunityAdapter(getActivity(),
+				mCommunityInfors);
+		mCommunityList.setAdapter(mCommunityAdapter);
+		mCommunityList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				if(position >=0 && position < mCommunityInfors.size()){
-					
-					int communityID =mCommunityInfors.get(position).comID;
+				if (position >= 0 && position < mCommunityInfors.size()) {
+
+					Log.i(Tag,
+							">>>>>>>>>>>>>>>>>>>>>>>>>>> start to call ADDetail>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+					String communityID = mCommunityInfors.get(position).comID;
 					// 进入广告策略页面
-					FragmentTransaction transaction = getFragmentManager().beginTransaction();
-					transaction.replace(R.id.contentLayout,new StrategyPatternFragment(communityID));
+					FragmentTransaction transaction = getFragmentManager()
+							.beginTransaction();
+					transaction.replace(R.id.contentLayout,
+							new StrategyPatternFragment(communityID));
 					transaction.addToBackStack(null);
-					transaction.commit();					
+					transaction.commit();
 				}
-						 
+
 			}
 		});
-		
+
 		v.findViewById(R.id.search_log).setOnClickListener(this);
 		v.findViewById(R.id.search_submit).setOnClickListener(this);
+		v.findViewById(R.id.refresh_btn).setOnClickListener(this);
 
 		uiHander = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
+
 				switch (msg.what) {
-				case STRATEGY_ADAPTER_UPDATE:
-					mCommunityAdapter.updateList(null);
-					break;
-				case STRATEGY_SHOW_PROGRESSDIALOG:
-					break;
-				case STRATEGY_HIDE_PROGRESSDIALOG:
+				case Class_Constant.REQUEST_COMMUNITY:
 					hideProgressDialog();
+					JSONObject json = (JSONObject) msg.obj;
+					int status = JsonResolve.getJsonObjInt(json, "status");
+					String respond = JsonResolve.getJsonObjectString(json,
+							"body");
+					if (1000 == status) {
+						mCommunityInfors = JsonResolve.getComunnitys(AesUtils
+								.fixDecrypt(respond));
+						mCommunityAdapter.updateList(mCommunityInfors);
+					}
+					doReFreshNitoce();
+
+					break;
+				case Class_Constant.POST_HIDE_PROGRESSDIALOG:
+					hideProgressDialog();
+					doReFreshNitoce();
 					break;
 				default:
 					break;
@@ -90,66 +112,63 @@ public class CommunityFragment extends BaseFragment {
 
 		};
 		// 请求默认小区数据
-		searchStrategy("");
-	}
-
-	
-	
-
-	private  void fillCommunityInfors() {
-		if(null == mCommunityInfors){
-			mCommunityInfors=new ArrayList<CommunityInfor>();
-		}
-		mCommunityInfors.clear();
-		
-		for (int i = 0; i < 10; i++) {
-			CommunityInfor community=new CommunityInfor();
-			community.comID=i;
-			community.comName="长虹智能"+i+"区";
-			mCommunityInfors.add(community);
-		}
-		
+		searchCommunity("");
 	}
 
 	/**
 	 * 根据关键字搜索小区
 	 * 
 	 * @param key
+	 *            ""=默认搜索所有
 	 */
-	private void searchStrategy(String key) {
+	private void searchCommunity(String key) {
 		showProgressDialog();
-		uiHander.sendEmptyMessageDelayed(STRATEGY_HIDE_PROGRESSDIALOG, 5000);
+		mHttpRequest.getCommunityList(uiHander, key, 50);
+		uiHander.sendEmptyMessageDelayed(
+				Class_Constant.POST_HIDE_PROGRESSDIALOG,
+				Configure.HTTP_MAX_WATING_TIME);
 	}
 
-
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		
-		return super.onKeyDown(keyCode, event);
+	
+	/**
+	 * 根据列表信息适配显示刷新提示信息
+	 */
+	private void doReFreshNitoce(){
+		if (null == mCommunityInfors
+				|| 0 == mCommunityInfors.size()) {
+			mRefreshBox.setVisibility(View.VISIBLE);
+			mCommunityList.setVisibility(View.GONE);
+		}else{
+			mRefreshBox.setVisibility(View.GONE);
+			mCommunityList.setVisibility(View.VISIBLE);
+		}
 	}
+	
+	
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		
-		
+
 		case R.id.search_log:
 			mSearchNotice.setVisibility(View.GONE);
-			//显示输入对话框
+			// 显示输入对话框
 			mSearchBox.setVisibility(View.VISIBLE);
 			break;
 		case R.id.search_submit:
 			mSearchBox.setVisibility(View.GONE);
 			mSearchNotice.setVisibility(View.VISIBLE);
 			// 搜索小区
-            String key=mSearchKey.getText().toString();
-			searchStrategy(key);
+			String key = mSearchKey.getText().toString();
+			searchCommunity(key);
 			break;
-
-
+		case R.id.refresh_btn:// 刷新
+			// 搜索小区
+			key = mSearchKey.getText().toString();
+			searchCommunity(key);
+			break;
 		}
+
 	}
 
-	
 }
-
-
