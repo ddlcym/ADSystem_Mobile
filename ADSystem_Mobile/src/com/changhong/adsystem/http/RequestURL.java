@@ -84,8 +84,8 @@ public class RequestURL {
 	}
 
 	
-	public static String getStrategyPattern( String comId) {
-		if(TextUtils.isEmpty(comId)){
+	public static String getStrategyPattern( String mac) {
+		if(TextUtils.isEmpty(mac)){
 			return "";
 		}
 		JSONObject request = new JSONObject();
@@ -94,7 +94,7 @@ public class RequestURL {
 		request.put(HandleResponse.BUSINESS_TYPE, MobileBusiness.MOBILE_COMMUNITY_SEARCH);
 
 		JSONObject body = new JSONObject();
-		body.put("comId", comId);
+		body.put("mac", mac);
 		request.put(HandleResponse.REQUEST_BODY,
 				AesUtils.fixEncrypt(body.toJSONString()));
 

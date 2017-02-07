@@ -117,8 +117,8 @@ public class HttpRequest {
 	}
 	
 	
-	public void getStrategyPatternByID(final Handler handler,String comId){
-		String URL = RequestURL.getStrategyPattern(comId);
+	public void getStrategyPatternByMac(final Handler handler,String mac){
+		String URL = RequestURL.getStrategyPattern(mac);
 		L.d(URL);
 		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
 				Request.Method.POST, URL, null,

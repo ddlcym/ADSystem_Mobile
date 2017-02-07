@@ -16,9 +16,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
+
+import com.changhong.adsystem.model.AdStrategyPattern;
 import com.changhong.adsystem.model.Class_Constant;
+import com.changhong.adsystem.model.DeviceInfor;
 import com.changhong.adsystem.model.JsonResolve;
-import com.changhong.adsystem.utils.AdStrategyPattern;
 import com.changhong.adsystem.utils.AesUtils;
 import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem_mobile.R;
@@ -26,12 +28,15 @@ import com.changhong.adsystem_mobile.R;
 public class StrategyPatternFragment extends BaseFragment {
 	
 	//视图定义
-	ListView mStrategyList = null;
-	StrategyAdapter mStrategyAdapter = null;
-	List<AdStrategyPattern> mAdSPs =new ArrayList<AdStrategyPattern>();
-	private String communityID;
-	public StrategyPatternFragment(String communityID){
-		this.communityID=communityID;
+	private ListView mStrategyList = null;
+	private StrategyAdapter mStrategyAdapter = null;
+	private List<AdStrategyPattern> mAdSPs =new ArrayList<AdStrategyPattern>();
+	private List<DeviceInfor> devList;
+	private int curDevIndex=0;
+
+	public StrategyPatternFragment(List<DeviceInfor> devList){
+		this.devList=devList;
+		curDevIndex=0;
 	}
 
 
@@ -82,7 +87,10 @@ public class StrategyPatternFragment extends BaseFragment {
 			}
 		};
 		//获取小区的广告策略
-		requestStrategy(communityID);
+		String curMac=getDevMac();
+		if(!curMac.equals("")){
+		    requestStrategy(curMac);
+		}
 	}
 
 
@@ -92,14 +100,26 @@ public class StrategyPatternFragment extends BaseFragment {
 	 * 
 	 * @param key
 	 */
-	private void requestStrategy(String communityID) {
+	private void requestStrategy(String mac) {
 		showProgressDialog();
-		mHttpRequest.getStrategyPatternByID(uiHander, communityID);
+		mHttpRequest.getStrategyPatternByMac(uiHander, mac);
 		uiHander.sendEmptyMessageDelayed(
 				Class_Constant.POST_HIDE_PROGRESSDIALOG,
 				Configure.HTTP_MAX_WATING_TIME);
 	}
 
+	
+	/**
+	 * 获取当前设备的mac地址
+	 * @return
+	 */
+	private String getDevMac(){
+		if(null != devList && curDevIndex < devList.size()){
+			return devList.get(curDevIndex).mac;
+		}
+		return "";
+	}
+	
 	
 
 	@Override

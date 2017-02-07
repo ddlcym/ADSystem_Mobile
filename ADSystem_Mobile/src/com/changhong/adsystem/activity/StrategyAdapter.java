@@ -9,7 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
-import com.changhong.adsystem.utils.AdStrategyPattern;
+
+import com.changhong.adsystem.model.AdStrategyPattern;
 import com.changhong.adsystem_mobile.R;
 import com.changhong.common.system.MyApplication;
 
@@ -68,7 +69,6 @@ public class StrategyAdapter extends BaseAdapter {
 			vh.endDate = (TextView) convertView.findViewById(R.id.ad_enddate);
 			vh.adType = (TextView) convertView.findViewById(R.id.ad_filetype);
 			vh.repeat = (TextView) convertView.findViewById(R.id.ad_repeat);
-
 			convertView.setTag(vh);
 		} else {
 			vh = (ViewHolder) convertView.getTag();

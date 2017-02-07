@@ -9,7 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.changhong.adsystem.utils.AdStrategyPattern;
 
 import android.util.Log;
 
@@ -30,11 +29,11 @@ public class JsonResolve {
 	
 	
 	
-	
-	
-	
-	
-	
+	/**
+	 * 解析小区信息列表
+	 * @param jsonStr
+	 * @return
+	 */
 	public static List<CommunityInfor> getComunnitys(String jsonStr){
 		List communitylist= new ArrayList<CommunityInfor>();
 		if(null == jsonStr)return communitylist;
@@ -48,26 +47,44 @@ public class JsonResolve {
 				comm.comID=getJsonObjectString(itemObj,"id");
 				comm.comName=getJsonObjectString(itemObj,"name");
 				comm.comLocation=getJsonObjectString(itemObj,"location");
+				comm.devList=getDevices(itemObj);
+				comm.devNum=(null == comm.devList)?0:comm.devList.size();
 				communitylist.add(comm);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}
-			
+		}			
 		return communitylist; 
 	}
 	
-	public String id;//设备ID
-	public int defaultDuration;//默认播放持续时间
-	public int uuid;//资源id	
-	public int index;	//播放序列
-	public String advertiser;	//名称
-	public String agency;	    //代理
-	public int  duration;//持续时长
-	public String minetype;//资源类型
-	public int repeat;//重复次数
-	public String url;	//资源请求路径
 	
+	
+	public static List<DeviceInfor> getDevices(JSONObject json){
+		List DeviceInfor= new ArrayList<DeviceInfor>();
+		if(null == json)return DeviceInfor;
+		try {
+			JSONArray array=getJsonObjectArray(json,"devices");
+			int size=(null == array)?0:array.length();
+			for (int i = 0; i <size; i++) {
+				JSONObject itemObj=array.getJSONObject(i);
+				DeviceInfor dev=new DeviceInfor();
+				dev.id=getJsonObjectString(itemObj,"id");
+				dev.mac=getJsonObjectString(itemObj,"mac");
+				dev.ssid=getJsonObjectString(itemObj,"ssid");
+				DeviceInfor.add(dev);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}			
+		return DeviceInfor; 
+	}
+	
+
+	/**
+	 * 获取广告策略
+	 * @param jsonStr
+	 * @return
+	 */
 	public static List<AdStrategyPattern> getStrategyPatterns(String jsonStr){
 		List strategyPatterns= new ArrayList<AdStrategyPattern>();
 		if(null == jsonStr)return strategyPatterns;
@@ -82,13 +99,21 @@ public class JsonResolve {
 				AdStrategyPattern adStrat=new AdStrategyPattern();
 				adStrat.id=devID;
 				adStrat.defaultDuration=defaultDuration;
-				adStrat.uuid=getJsonObjectString(itemObj,"uuid");
 				adStrat.index=getJsonObjInt(itemObj,"index");
 				adStrat.advertiser=getJsonObjectString(itemObj,"advertiser");
-				adStrat.agency=getJsonObjectString(itemObj,"agency");
-				adStrat.duration=getJsonObjInt(itemObj,"duration");
 				adStrat.repeat=getJsonObjInt(itemObj,"repeat");
-				adStrat.url=getJsonObjectString(itemObj,"url");
+				adStrat.startDate=getJsonObjectString(itemObj,"startDate");
+				adStrat.endDate=getJsonObjectString(itemObj,"endDate");
+				JSONArray files=getJsonObjectArray(json,"files");
+				adStrat.fileNum=(null == files)?0:files.length();
+                for (int j = 0; j < adStrat.fileNum; j++) {
+    				JSONObject fileObj=files.getJSONObject(j);
+    				String url=getJsonObjectString(fileObj,"url");
+    				if(null != url && url.length() >2){
+    				   adStrat.url=url;
+    				   break;
+    				}
+				}				
 				strategyPatterns.add(adStrat);
 			}
 		} catch (JSONException e) {
