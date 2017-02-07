@@ -6,6 +6,7 @@
     <string name="ab_strategy_title">广告策略</string>   
     <string name="ab_community_search">搜索小区</string>    
     <string name="ab_progressdialog_notice">数据加载中，请稍后...</string>
+    <string name="ab_search_is_null">主人，没有搜到小区信息,刷新试试！</string>    
     
     <!-- 广告策略细节 -->
     <string name="ab_item_start_date">开始时间：</string>
