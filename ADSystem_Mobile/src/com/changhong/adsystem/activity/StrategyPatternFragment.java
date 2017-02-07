@@ -24,10 +24,7 @@ public class StrategyPatternFragment extends BaseFragment {
 	//视图定义
 	ListView mStrategyList = null;
 	StrategyAdapter mStrategyAdapter = null;
-	
-	private static final int STRATEGY_ADAPTER_UPDATE = 0;
-	private static final int STRATEGY_SHOW_PROGRESSDIALOG = 1;
-	private static final int STRATEGY_HIDE_PROGRESSDIALOG = 2;
+
 	private String communityID;
 	public StrategyPatternFragment(String communityID){
 		this.communityID=communityID;

@@ -34,4 +34,9 @@ public class MobileBusiness {
      * 手机号码
      */
     public final static String MOBILE="mobile";
+    
+    
+    /**
+     * 
+     */
 }

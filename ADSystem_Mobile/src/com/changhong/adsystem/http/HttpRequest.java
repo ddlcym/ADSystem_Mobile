@@ -117,6 +117,31 @@ public class HttpRequest {
 		mReQueue.add(jsonObjectRequest);
 		
 	}
+	
+	
+	public void getStrategyPatternByID(final Handler handler,int comId){
+		String URL = RequestURL.getCommunity(words,number);
+		L.d(URL);
+		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+				Request.Method.POST, URL, null,
+				new Response.Listener<org.json.JSONObject>() {
+
+					@Override
+					public void onResponse(org.json.JSONObject arg0) {
+						// TODO Auto-generated method stub
+						 Log.i("mmmm", "HttpRequest***getResidential:" +
+						 arg0);
+						Message msg=new Message();
+						msg.what=Class_Constant.REQUEST_COMMUNITY;
+						msg.obj=arg0;
+						handler.sendMessage(msg);
+					}
+				}, errorListener);
+		jsonObjectRequest.setTag(HttpRequest.class.getSimpleName());// 设置tag,cancelAll的时候使用
+		mReQueue.add(jsonObjectRequest);
+		
+	}
+	
 
 	private Response.ErrorListener errorListener = new Response.ErrorListener() {
 		@Override

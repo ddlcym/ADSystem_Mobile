@@ -14,7 +14,8 @@ public class Class_Constant {
 	public static final int  POST_SECURITYCODE_RESULT=1001;
 	public static final int  RECEIVE_SECURITYCODE=1002;
 	public static final int  POST_LOGIN=1003;	
-	public static final int  REQUEST_COMMUNITY=1004;
+	public static final int  REQUEST_COMMUNITY=1004;//请求小区列表
+	public static final int  REQUEST_STRATEPATTERN=1005;//请求广告策略
 
 	
 }

@@ -66,7 +66,7 @@ public class RequestURL {
 	 * number 
 	 * 		the number of residential 
 	 */
-	public static String getResidential(String words, int number) {
+	public static String getCommunity(String words, int number) {
 		if(null == words||number<0){
 			return "";
 		}
@@ -84,5 +84,22 @@ public class RequestURL {
 		return requestParamsURL + request.toJSONString();
 	}
 
+	
+	public static String getStrategyPattern( String comId) {
+		if(TextUtils.isEmpty(comId)){
+			return "";
+		}
+		JSONObject request = new JSONObject();
+		request.put(HandleResponse.APP_TYPE, "ANDROID");
+		request.put(HandleResponse.APP_VERSION, "1.0");
+		request.put(HandleResponse.BUSINESS_TYPE, MobileBusiness.MOBILE_COMMUNITY_SEARCH);
+
+		JSONObject body = new JSONObject();
+		body.put("comId", comId);
+		request.put(HandleResponse.REQUEST_BODY,
+				AesUtils.fixEncrypt(body.toJSONString()));
+
+		return requestParamsURL + request.toJSONString();
+	}
 
 }
