@@ -16,11 +16,12 @@
 
             <!-- 中间内容 -->
 
-            <RelativeLayout android:id="@+id/search_notice"
+            <RelativeLayout
+                android:id="@+id/search_notice"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/search_bg"
-                android:visibility="gone">
+                android:visibility="gone" >
 
                 <View
                     android:id="@+id/search_center"
@@ -46,34 +47,35 @@
                     android:textColor="@color/Grey_600"
                     android:textSize="@dimen/FONT_SIZE_SMALL" />
             </RelativeLayout>
-                
-                <LinearLayout android:id="@+id/search_inputbox"
-                    android:layout_width="match_parent"
+
+            <LinearLayout
+                android:id="@+id/search_inputbox"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" >
+
+                <EditText
+                    android:id="@+id/search_input"
+                    android:layout_width="0dip"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/input_bg"
+                    android:hint="长虹科技大厦"
+                    android:paddingLeft="10dip"
+                    android:paddingRight="10dip"
+                    android:textColorHint="@color/grey"
+                    android:textSize="16sp" />
 
-                    <EditText
-                        android:id="@+id/search_input"
-                        android:layout_width="0dip"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="15dp"
-                        android:hint="长虹科技大厦"
-                        android:textSize="16sp"
-                        android:textColorHint="@color/grey"
-                        android:background="@drawable/input_bg"
-                        android:paddingLeft="10dip"
-                        android:paddingRight="10dip" />
-
-                    <Button
-                        android:id="@+id/search_submit"
-                        android:layout_width="80dp"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/searchbtn"
-                        android:text="搜索"
-                        android:textColor="@color/white" />
-                </LinearLayout>
+                <Button
+                    android:id="@+id/search_submit"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/searchbtn"
+                    android:text="搜索"
+                    android:textColor="@color/white" />
+            </LinearLayout>
         </FrameLayout>
 
         <ListView
@@ -85,5 +87,31 @@
             android:listSelector="@drawable/btn_bg_selector" />
     </LinearLayout>
 
+    <LinearLayout android:id="@+id/refresh_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:orientation="vertical" 
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_toRightOf="@id/search_center"
+            android:gravity="center"
+            android:text="@string/ab_community_search"
+            android:textColor="@color/Grey_600"
+            android:textSize="@dimen/FONT_SIZE_NORMAL" />
+
+        <Button
+            android:id="@+id/refresh_btn"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/searchbtn"
+            android:text="刷新"
+            android:textColor="@color/white" />
+    </LinearLayout>
 
 </RelativeLayout>
