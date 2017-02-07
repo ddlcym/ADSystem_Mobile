@@ -47,10 +47,10 @@ public class LoginActivity extends Activity implements OnClickListener {
 	int tempSelect = selectIndex;
 	boolean isReLogin = false;
 	// private String [] coutry_phone_sn_array,coutry_name_array;
-	public final static int LOGIN_ENABLE = 0x01; // 注册完毕了
-	public final static int LOGIN_UNABLE = 0x02; // 注册完毕了
-	public final static int PASS_ERROR = 0x03; // 注册完毕了
-	public final static int NAME_ERROR = 0x04; // 注册完毕了
+	public final static int LOGIN_ENABLE = 0x01; // 
+	public final static int LOGIN_UNABLE = 0x02; // 
+	public final static int PASS_ERROR = 0x03; //
+	public final static int NAME_ERROR = 0x04; // 
 
 	private Button bt_username_clear, get_security_code;
 	private TimeCount time;
