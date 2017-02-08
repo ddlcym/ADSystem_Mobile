@@ -1,14 +1,11 @@
 package com.changhong.adsystem.activity;
 
 import java.util.List;
-
 import org.json.JSONObject;
-
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -16,6 +13,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+import com.changhong.adsystem.adapter.CommunityAdapter;
 import com.changhong.adsystem.model.Class_Constant;
 import com.changhong.adsystem.model.CommunityInfor;
 import com.changhong.adsystem.model.JsonResolve;
@@ -64,12 +63,16 @@ public class CommunityFragment extends BaseFragment {
 
 					Log.i(Tag,
 							">>>>>>>>>>>>>>>>>>>>>>>>>>> start to call ADDetail>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-					String communityID = mCommunityInfors.get(position).comID;
+					List devList = mCommunityInfors.get(position).devList;
+					if(null == devList){
+						Toast.makeText(mActivity, R.string.ab_community_nodevlist, Toast.LENGTH_SHORT).show();
+						return;
+					}
 					// 进入广告策略页面
 					FragmentTransaction transaction = getFragmentManager()
 							.beginTransaction();
 					transaction.replace(R.id.contentLayout,
-							new StrategyPatternFragment(communityID));
+							new StrategyPatternFragment(devList));
 					transaction.addToBackStack(null);
 					transaction.commit();
 				}

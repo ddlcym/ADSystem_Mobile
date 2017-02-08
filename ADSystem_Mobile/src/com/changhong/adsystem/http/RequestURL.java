@@ -14,7 +14,7 @@ import com.changhong.adsystem.utils.AesUtils;
  * @parameter
  */
 public class RequestURL {
-	private static String serverIP = "http://192.168.1.115:8080/";
+	private static String serverIP = "http://192.168.1.106:8080/";
 //	private static String serverIP = "http://192.168.1.101:8080/";
 //	// 验证码请求地址
 	private static String requestParamsURL = serverIP

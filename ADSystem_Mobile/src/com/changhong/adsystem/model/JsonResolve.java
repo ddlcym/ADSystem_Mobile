@@ -62,13 +62,14 @@ public class JsonResolve {
 	public static List<DeviceInfor> getDevices(JSONObject json){
 		List DeviceInfor= new ArrayList<DeviceInfor>();
 		if(null == json)return DeviceInfor;
+		
 		try {
-			JSONArray array=getJsonObjectArray(json,"devices");
+			JSONArray array=getJsonObjectArray(json,"descs");
 			int size=(null == array)?0:array.length();
 			for (int i = 0; i <size; i++) {
 				JSONObject itemObj=array.getJSONObject(i);
 				DeviceInfor dev=new DeviceInfor();
-				dev.id=getJsonObjectString(itemObj,"id");
+				dev.id=getJsonObjectString(itemObj,"uuid");
 				dev.mac=getJsonObjectString(itemObj,"mac");
 				dev.ssid=getJsonObjectString(itemObj,"ssid");
 				DeviceInfor.add(dev);

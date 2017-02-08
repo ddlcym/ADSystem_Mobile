@@ -9,7 +9,7 @@ import java.util.Map;
 import org.xmlpull.v1.XmlPullParserException;
 
 import com.changhong.adsystem.model.JsonObject;
-import com.changhong.adsystem.socket.SocketUtil;
+import com.changhong.adsystem.p2p.SocketUtil;
 import com.changhong.adsystem.utils.Configure;
 
 import android.os.Bundle;
