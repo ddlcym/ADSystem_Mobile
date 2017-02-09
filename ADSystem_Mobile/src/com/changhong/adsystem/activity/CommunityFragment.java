@@ -19,7 +19,7 @@ import com.changhong.adsystem.model.Class_Constant;
 import com.changhong.adsystem.model.CommunityInfor;
 import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.utils.AesUtils;
-import com.changhong.adsystem.utils.Configure;
+import com.changhong.adsystem.utils.ServiceConfig;
 import com.changhong.adsystem_mobile.R;
 
 public class CommunityFragment extends BaseFragment {
@@ -129,7 +129,7 @@ public class CommunityFragment extends BaseFragment {
 		mHttpRequest.getCommunityList(uiHander, key, 50);
 		uiHander.sendEmptyMessageDelayed(
 				Class_Constant.POST_HIDE_PROGRESSDIALOG,
-				Configure.HTTP_MAX_WATING_TIME);
+				ServiceConfig.HTTP_MAX_WATING_TIME);
 	}
 
 	

@@ -24,6 +24,7 @@ import com.changhong.adsystem.model.DeviceInfor;
 import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.utils.AesUtils;
 import com.changhong.adsystem.utils.Configure;
+import com.changhong.adsystem.utils.ServiceConfig;
 import com.changhong.adsystem_mobile.R;
 import com.changhong.common.system.MyApplication;
 
@@ -126,7 +127,7 @@ public class StrategyPatternFragment extends BaseFragment {
 		mHttpRequest.getStrategyPatternByMac(uiHander, mac);
 		uiHander.sendEmptyMessageDelayed(
 				Class_Constant.POST_HIDE_PROGRESSDIALOG,
-				Configure.HTTP_MAX_WATING_TIME);
+				ServiceConfig.HTTP_MAX_WATING_TIME);
 	}
 
 	/**

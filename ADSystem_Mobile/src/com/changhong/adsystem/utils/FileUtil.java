@@ -73,30 +73,17 @@ public class FileUtil {
 	 * @param fileName
 	 * @return boolean
 	 */
-	public boolean isFileExist(String fileType, String fileName) {
+	public boolean isFileExist(String fileName) {
 
-		String path = FILE_PATH;
+		String path = IMAGE_PATH;
 		// 根据文件类型修改保存路径
-		if (fileType.contains(IMAGE_PATH))path = IMAGE_PATH;
-
 		fileName = path + File.separator + fileName;
 
 		File file = new File(SDCARDPATH + fileName);
 		return file.exists();
 	}
 
-	/**
-	 * 根据文件全路径，判断文件是否存在
-	 * 
-	 * @param fullPath
-	 *            文件全路径
-	 * @return
-	 */
-	public boolean isFileExist(String fullPath) {
-		File file = new File(fullPath);
-		return file.exists();
-	}
-
+	
 	/**
 	 * @param path
 	 *            存放目录
@@ -106,19 +93,15 @@ public class FileUtil {
 	 *            数据来源
 	 * @return
 	 */
-	public long writeToSDCard(String type, String fileName, InputStream input) {
+	public long writeToSDCard(String fileName, InputStream input) {
 
 		int byteCount = 0;
 		File file = null;
 		BufferedInputStream in = null;
 		BufferedOutputStream output = null;
 		// 默认状态下，路径为基本文件
-		String path = FILE_PATH;
+		String path = IMAGE_PATH;
 		try {
-
-			// 根据文件类型修改保存路径
-			if (type.contains(IMAGE_PATH))path = IMAGE_PATH;
-
 			// 创建文件夹
 			createSDDir(path);
 
@@ -257,13 +240,9 @@ public class FileUtil {
 	 * @param fileType
 	 *            文件类型
 	 */
-	public void checkMaxFileItemExceedAndProcess(String fileType) {
-
-		String path = FILE_PATH;
-		// 根据文件类型修改保存路径
-		if (fileType.contains(IMAGE_PATH))path = IMAGE_PATH;
-
-		File fileList = new File(getSDCARDPATH() + File.separator + path);
+	public void checkMaxFileItemExceedAndProcess() {
+	
+		File fileList = new File(getSDCARDPATH() + File.separator + IMAGE_PATH);
 		String[] list = fileList.list();
 		if (list != null && list.length > MAX_FILE_ITEM_SIZE) {
 			Log.e("FILE_DELETE", "now small picture number is  " + list.length);

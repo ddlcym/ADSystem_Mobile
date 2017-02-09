@@ -40,13 +40,11 @@ public class HttpDownloader {
    /**
     * 文件下载
     * @param fileUri 下载URL
-    * @param fileType 文件类型：音乐、视频、文本
-    * @param fileName 文件名称
     * @return  downLoadOK=下载成功； downloadError=下载失败； fileExist=文件存在。
     */
-	public static String download(String fileUri, String fileType) {
+	public static String download(String fileUri) {
 
-		String result = Configure.ACTION_FAILED;
+		String result ="failed";
 		InputStream inputStream = null;
 		HttpURLConnection conn = null;
 		try {
@@ -60,28 +58,23 @@ public class HttpDownloader {
 				FileUtil fileUtils = new FileUtil();
 				String fileName=fileUtils.getFileName(fileUri);
 				// 判断文件是否存在
-				if (fileUtils.isFileExist(fileType, fileName)) {
+				if (fileUtils.isFileExist(fileName)) {
 					result = Configure.FILE_EXIST;
 				} else {
-					long fileLength = fileUtils.writeToSDCard(fileType,fileName, inputStream);
+					long fileLength = fileUtils.writeToSDCard(fileName, inputStream);
 					// 如果fileResult=null,下载失败。
 					if (contentLength == fileLength) {
-						result = Configure.ACTION_SUCCESS;
+						result = "success";
 					}else{				
 						//文件不完整，删除
 						String removeFile=fileUtils.getLocalFileDir()+fileName;
 						fileUtils.removeFileFromSDCard(removeFile);
 					}
-					fileUtils.checkMaxFileItemExceedAndProcess(fileType);
+					fileUtils.checkMaxFileItemExceedAndProcess();
 				}
-			}else{
-				result = Configure.FILE_LARGE;
 			}
 		} catch (IOException e) {
-			result = Configure.ACTION_FAILED;
 			e.printStackTrace();
-			Log.e("YDINFOR::", "-----------------------HttpURLConnection  end1212----------------------");
-
 		}finally {
 			try {
 
