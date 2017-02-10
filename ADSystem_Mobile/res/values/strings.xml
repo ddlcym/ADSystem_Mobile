@@ -16,4 +16,8 @@
     <string name="ab_item_file_num">文件数量：</string>   
     <string name="ad_item_repeat">循环次数：</string>
     
+    
+    <!-- 提示信息 -->
+    <string name="ad_sp_nojson">获取广告策略失败！</string>
+    
 </resources>
