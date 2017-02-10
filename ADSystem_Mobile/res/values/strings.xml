@@ -7,12 +7,13 @@
     <string name="ab_community_search">搜索小区</string>    
     <string name="ab_progressdialog_notice">数据加载中，请稍后...</string>
     <string name="ab_search_is_null">主人，没有搜到小区信息,刷新试试！</string>    
-    <string name="ab_community_nodevlist">这个小区没有设备，请再和客服再确认一下吧！</string>    
+    <string name="ab_community_nodevlist">小区没有设备，请联系客服确认！</string>    
     
     <!-- 广告策略细节 -->
     <string name="ab_item_start_date">开始时间：</string>
     <string name="ab_item_end_date">有效期至：</string>
-    <string name="ab_item_file_type">类型：</string>
+    <string name="ab_item_file_type">广告类型：</string>
+    <string name="ab_item_file_num">文件数量：</string>   
     <string name="ad_item_repeat">循环次数：</string>
     
 </resources>

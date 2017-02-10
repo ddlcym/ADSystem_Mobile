@@ -98,13 +98,13 @@
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:gravity="center_horizontal"
-            android:text="@string/ab_community_nodevlist"
+            android:text="@string/ab_search_is_null"
             android:textColor="@color/Grey_600"
-            android:textSize="@dimen/FONT_SIZE_NORMAL" />
+            android:textSize="@dimen/FONT_SIZE_SMALL" />
 
         <Button
             android:id="@+id/refresh_btn"
-            android:layout_width="100dp"
+            android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/searchbtn"
