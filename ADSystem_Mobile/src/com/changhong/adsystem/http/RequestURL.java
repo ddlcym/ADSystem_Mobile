@@ -14,11 +14,10 @@ import com.changhong.adsystem.utils.AesUtils;
  * @parameter
  */
 public class RequestURL {
-	private static String serverIP = "http://192.168.1.106:8080/";
+	private static String serverIP = "http://192.168.1.103:8080/";
 //	private static String serverIP = "http://192.168.1.101:8080/";
 //	// 验证码请求地址
-	private static String requestParamsURL = serverIP
-			+ "adplatform/mobile/resource.html?json=";
+	private static String requestParamsURL = serverIP+ "adplatform/mobile/resource.html?json=";
 	//test    	
 //	private static String serverIP = "http://192.168.1.101:8082/";
 //	private static String requestParamsURL = serverIP
@@ -77,8 +76,7 @@ public class RequestURL {
 		JSONObject body = new JSONObject();
 		body.put("words", words);
 		body.put("number", number);
-		request.put(HandleResponse.REQUEST_BODY,
-				AesUtils.fixEncrypt(body.toJSONString()));
+		request.put(HandleResponse.REQUEST_BODY,AesUtils.fixEncrypt(body.toJSONString()));
 
 		return requestParamsURL + request.toJSONString();
 	}

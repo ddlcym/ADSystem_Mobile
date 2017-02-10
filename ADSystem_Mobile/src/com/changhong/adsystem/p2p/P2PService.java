@@ -33,7 +33,7 @@ public class P2PService {
 		initP2PService();
 	}
 
-	public static P2PService creatFileEditServer() {
+	public static P2PService creatP2PService() {
 		if (null == intance) {
 			intance = new P2PService();
 		}

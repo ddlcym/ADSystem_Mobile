@@ -1,12 +1,9 @@
 package com.changhong.adsystem.activity;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import android.os.Handler;
 import android.os.Message;
@@ -18,12 +15,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.changhong.adsystem.adapter.DeviceSelectAdapter;
 import com.changhong.adsystem.adapter.StrategyAdapter;
+import com.changhong.adsystem.http.image.loader.core.ImageLoadController;
 import com.changhong.adsystem.model.AdStrategyPattern;
 import com.changhong.adsystem.model.Class_Constant;
 import com.changhong.adsystem.model.DeviceInfor;
 import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.utils.AesUtils;
 import com.changhong.adsystem.utils.Configure;
+import com.changhong.adsystem.utils.FileUtil;
 import com.changhong.adsystem.utils.ServiceConfig;
 import com.changhong.adsystem_mobile.R;
 import com.changhong.common.system.MyApplication;
@@ -71,27 +70,38 @@ public class StrategyPatternFragment extends BaseFragment {
 				switch (msg.what) {
 				case Class_Constant.REQUEST_STRATEPATTERN:
 					hideProgressDialog();
-					JSONObject json = (JSONObject) msg.obj;
-					int status = JsonResolve.getJsonObjInt(json, "status");
-					String respond = JsonResolve.getJsonObjectString(json,
-							"body");
-					if (1000 == status) {
-						mAdSPs = JsonResolve.getStrategyPatterns(AesUtils
-								.fixDecrypt(respond));
+//					JSONObject jsonObj =JsonResolve.getJsonObj((String) msg.obj);
+//                    if(null == jsonObj)break;
+//					int status = JsonResolve.getJsonObjInt(jsonObj, "status");
+//					String respond = JsonResolve.getJsonObjectString(jsonObj,"body");
+//					if (1000 == status) {
+//						respond=AesUtils.fixDecrypt(respond);
+				    	String respond=(String) msg.obj;
+						mAdSPs = JsonResolve.getStrategyPatterns(respond);					
 						mStrategyAdapter.updateList(mAdSPs);
-					}
+						new FileUtil().writeToSDCard(Configure.adBaseFilePath, respond);
+//					}
+					
+					
 					break;
 				case Class_Constant.POST_HIDE_PROGRESSDIALOG:
 					hideProgressDialog();
 					break;
+				case ServiceConfig.IMAGE_EXIST:
+					break;
+				case ServiceConfig.IMAGE_DOWNLOAD_FINISHED:
+					break;
+				case ServiceConfig.IMAGE_DOWNLOAD_FAILED:
+					break;
 				default:
+					testJson();
 					break;
 
 				}
 			}
 		};
 		// 获取小区的广告策略
-		String curMac = getDevMac();
+		String curMac = getDeviceMac();
 		if (!curMac.equals("")) {
 			requestStrategy(curMac);
 		}
@@ -124,10 +134,13 @@ public class StrategyPatternFragment extends BaseFragment {
 	 */
 	private void requestStrategy(String mac) {
 		showProgressDialog();
-		mHttpRequest.getStrategyPatternByMac(uiHander, mac);
-		uiHander.sendEmptyMessageDelayed(
-				Class_Constant.POST_HIDE_PROGRESSDIALOG,
-				ServiceConfig.HTTP_MAX_WATING_TIME);
+//		mHttpRequest.getStrategyPatternByMac(uiHander, mac);
+//		uiHander.sendEmptyMessageDelayed(
+//				Class_Constant.POST_HIDE_PROGRESSDIALOG,
+//				ServiceConfig.HTTP_MAX_WATING_TIME);
+
+		//测试用
+		uiHander.sendEmptyMessageDelayed(255, 10000);
 	}
 
 	/**
@@ -135,16 +148,33 @@ public class StrategyPatternFragment extends BaseFragment {
 	 * 
 	 * @return
 	 */
-	private String getDevMac() {
+	private String getDeviceMac() {
 		if (null != devList && curDevIndex < devList.size()) {
 			return devList.get(curDevIndex).mac;
 		}
 		return "";
 	}
+	
+	/**
+	 * 下载广告资源文件
+	 */
+	private void downLoadADRes(){
+		ImageLoadController imgCtr=ImageLoadController.getInstance();
+		for(AdStrategyPattern adsp : mAdSPs){
+			int size=adsp.urls.size();
+			for (int i = 0; i < size; i++) {
+				String imagePath=adsp.urls.get(i);
+				if(!imgCtr.imageIsExist(imagePath)){
+					imgCtr.gotoDownloadWay(uiHander, true, imagePath);
+				}
+			}			
+		}		
+	}
+	
+	
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-
 		return super.onKeyDown(keyCode, event);
 	}
 
@@ -152,10 +182,10 @@ public class StrategyPatternFragment extends BaseFragment {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_commit:// 上传数据
-
+            
 			break;
-		case R.id.btn_update:// 下载数据
-			// searchStrategy(key);
+		case R.id.btn_update://下载广告资源文件	
+			downLoadADRes();
 			break;
 		case R.id.btn_list:// 显示列表
 			MyApplication.vibrator.vibrate(100);
@@ -164,48 +194,13 @@ public class StrategyPatternFragment extends BaseFragment {
 
 		}
 	}
-
-	/*
-	 * 保存广告策略信息
-	 */
-	private void saveSPBaseFile(String spStr) {
-
-		try {
-			File spJson = new File(Configure.adBaseFilePath, "spJson.json");
-			if (spJson.exists()) {
-				spJson.delete();
-			}
-			FileWriter fw = new FileWriter(spJson);
-			fw.write(spStr.toString(), 0, spStr.toString().length());
-			fw.flush();
-			fw.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	
+	private void testJson(){
+		FileUtil fileUtil=new FileUtil();
+		String spjson=fileUtil.readFileFromSDCard(Configure.adBaseFilePath+"/spJson.json");
+		spjson=spjson.replace(" ", "");
+		uiHander.sendMessage(uiHander.obtainMessage(Class_Constant.REQUEST_STRATEPATTERN, spjson));
 	}
 
-	private String getSpBaseJson() {
-		StringBuffer sb = new StringBuffer();
-		File spJson = new File(Configure.adBaseFilePath + File.separator+ "spJson.json");
-		if (spJson.exists()) {
-			try {
-				
-				FileInputStream fis = new FileInputStream(spJson);
-				byte[] buf = new byte[1024];
-				while ((fis.read(buf)) != -1) {
-					sb.append(new String(buf));
-					buf = new byte[1024];// 重新生成，避免和上次读取的数据重复
-				}
-				
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-		}
-
-		return sb.toString();
-	}
-
+	
 }

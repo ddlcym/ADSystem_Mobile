@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.changhong.adsystem.http.HttpRequest;
+import com.changhong.adsystem.p2p.P2PService;
 import com.changhong.adsystem_mobile.R;
 
 public abstract class BaseFragment extends Fragment implements OnClickListener {
@@ -22,19 +23,21 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
     protected View mRootView=null;
     protected Activity mActivity =null; 
     protected HttpRequest mHttpRequest=null;
+    protected P2PService  mP2PService=null;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
     	this.mActivity=getActivity();
-    	mHttpRequest=HttpRequest.getInstance();
+    	mHttpRequest = HttpRequest.getInstance();
+    	mP2PService = P2PService.creatP2PService();
 	}
 
 
 
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         if (null == mRootView) {
             mRootView = inflater.inflate(getLayoutId(), container, false);
         }

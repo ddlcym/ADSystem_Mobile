@@ -20,6 +20,12 @@ public class ServiceConfig {
 	public static final int HTTP_MAX_WATING_TIME = 30000;//通讯最大延迟时间
 
 	public static final int MSG_SUCCESS = 0;//通讯成功 
-	public static final int MSG_FAILURE = 1;//通讯失败       
+	public static final int MSG_FAILURE = 1;//通讯失败   
+	
+	/************************************************文件下载定义************************************************************/
+	public final static int IMAGE_DOWNLOAD_START= 2000;//文件下载成功
+	public final static int IMAGE_EXIST= 2001;//文件已经存在
+	public final static int IMAGE_DOWNLOAD_FINISHED= 2002;//文件下载完成
+	public final static int IMAGE_DOWNLOAD_FAILED= 2003;//文件下载失败
 
 }

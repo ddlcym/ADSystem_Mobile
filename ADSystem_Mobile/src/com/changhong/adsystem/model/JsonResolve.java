@@ -9,6 +9,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.changhong.adsystem.utils.Configure;
+import com.changhong.adsystem.utils.FileUtil;
+
 
 import android.util.Log;
 
@@ -20,7 +23,7 @@ import android.util.Log;
  * @parameter   
  */
 public class JsonResolve {
-
+	static FileUtil mFileUtil=new FileUtil();
 	
 	public static String resolveSecurityCode(JSONObject json){
 		String result=getJsonObjectString(json,"message");		
@@ -105,15 +108,20 @@ public class JsonResolve {
 				adStrat.repeat=getJsonObjInt(itemObj,"repeat");
 				adStrat.startDate=getJsonObjectString(itemObj,"startDate");
 				adStrat.endDate=getJsonObjectString(itemObj,"endDate");
-				JSONArray files=getJsonObjectArray(json,"files");
-				adStrat.fileNum=(null == files)?0:files.length();
-                for (int j = 0; j < adStrat.fileNum; j++) {
+				JSONArray files=getJsonObjectArray(itemObj,"files");
+				int fileNum=(null == files)?0:files.length();
+				adStrat.urls=new ArrayList<String>();
+                for (int j = 0; j < fileNum; j++) {
     				JSONObject fileObj=files.getJSONObject(j);
     				String url=getJsonObjectString(fileObj,"url");
-    				if(null != url && url.length() >2){
-    				   adStrat.url=url;
-    				   break;
+    				String minetype=getJsonObjectString(fileObj,"mineType");
+                    if(null == adStrat.minetype){
+                    	adStrat.minetype=minetype;
     				}
+    				if(null != url && url.length()>2){
+    					adStrat.urls.add(url);
+    					break;
+    				}   				
 				}				
 				strategyPatterns.add(adStrat);
 			}
@@ -121,6 +129,39 @@ public class JsonResolve {
 			e.printStackTrace();
 		}			
 		return strategyPatterns; 
+	}
+	
+	
+	/**
+	 * 转换资源存储地址为本地url地址
+	 * @param jsonStr
+	 */
+	public static String converHttpUrl2LocaUrl(String jsonStr){
+		if(null == jsonStr)return "";
+		String locationJson=jsonStr;
+	    String prefix="adSystem";
+		try {
+			JSONObject json = new JSONObject(jsonStr);
+			JSONArray array=getJsonObjectArray(json,"playList");			
+			int size=(null == array)?0:array.length();
+			for (int i = 0; i <size; i++) {
+				JSONObject itemObj=array.getJSONObject(i);
+				if(null == itemObj)continue;
+				JSONArray files=getJsonObjectArray(json,"files");
+				int fileNum=(null == files)?0:files.length();
+                for (int j = 0; j < fileNum; j++) {
+    				JSONObject fileObj=files.getJSONObject(j);
+    				if(null == fileObj)continue;
+    				String url=getJsonObjectString(fileObj,"url");
+    				if(null != url && url.length() >2){
+    				    locationJson=locationJson.replace(url, Configure.adResPrefix+url);
+    				}
+				}				
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}			
+		return locationJson; 
 	}
 	
 	
@@ -160,5 +201,15 @@ public class JsonResolve {
 			Log.e("mmmm", "JsonResolve:" + key);
 		}
 		return i;
+	}
+	
+	public static JSONObject getJsonObj(String str) {
+		JSONObject jsonObj = null;
+		try {
+			jsonObj=new JSONObject(str);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonObj;
 	}
 }

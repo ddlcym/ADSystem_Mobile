@@ -2,10 +2,14 @@ package com.changhong.adsystem.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Comparator;
 import android.os.Environment;
@@ -22,8 +26,7 @@ public class FileUtil {
 	 * 资源文件路径
 	 */
 	public static final String IMAGE_PATH = "res";
-	
-	
+
 	// 文件读取Buffer size
 	private static final int BUFFER_SIZE = 4 * 1024; // 4K
 
@@ -31,18 +34,42 @@ public class FileUtil {
 
 	public final static int DELETE_ITEM_SIZE = 2;
 
+	
+	public FileUtil() {
+		SDCARDPATH = getSDCARDPATH() + File.separator;
+	}
+	
+	
 	/**
 	 * 获取sdcard根目录
 	 * 
 	 * @return SDcard根目录路径
 	 */
 	public String getSDCARDPATH() {
-		return SDCARDPATH;
+		boolean exist = isSdCardExist();
+		String sdpath = "";
+		if (exist) {
+			sdpath = Environment.getExternalStorageDirectory()
+					.getAbsolutePath();
+		} else {
+			sdpath = "不适用";
+		}
+		return sdpath;
 	}
-
-	public FileUtil() {
-		SDCARDPATH = Environment.getExternalStorageDirectory() + File.separator;
+	
+	
+	/**
+	 * 判断SDCard是否存在 [当没有外挂SD卡时，内置ROM也被识别为存在sd卡]
+	 * 
+	 * @return
+	 */
+	public static boolean isSdCardExist() {
+		return Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED);
 	}
+	
+	
+	
 
 	/**
 	 * 在SDcard上创建文件
@@ -83,7 +110,6 @@ public class FileUtil {
 		return file.exists();
 	}
 
-	
 	/**
 	 * @param path
 	 *            存放目录
@@ -110,7 +136,8 @@ public class FileUtil {
 			// 创建文件
 			file = creatSDFile(path + fileName);
 			in = new BufferedInputStream(input, BUFFER_SIZE);
-			output = new BufferedOutputStream(new FileOutputStream(file),BUFFER_SIZE);
+			output = new BufferedOutputStream(new FileOutputStream(file),
+					BUFFER_SIZE);
 			// 以4K为单位，每次写4k
 			byte buffer[] = new byte[BUFFER_SIZE];
 			int bytesRead = -1;
@@ -134,6 +161,91 @@ public class FileUtil {
 		}
 		return byteCount;
 	}
+
+	/**
+	 * @param fileName
+	 *            文件名字
+	 * @param content
+	 *            保存内容
+	 * @return
+	 */
+	public long writeToSDCard(String fileName, String content) {
+
+		int byteCount = 0;
+		File file = null;
+		FileOutputStream outStream = null;
+		OutputStreamWriter writer = null;
+		// 默认状态下，路径为基本文件
+		String path = IMAGE_PATH;
+		try {
+			// 创建文件夹
+			createSDDir(path);
+			// 添加文件分隔符
+			path = path + File.separator;
+			// 创建文件
+			file = creatSDFile(path + fileName);
+			outStream = new FileOutputStream(file);
+			writer = new OutputStreamWriter(outStream, "utf-8");
+			writer.write(content);
+			writer.flush();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// 关闭流
+				if (null != writer) {
+					writer.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				// 关闭流
+				if (null != outStream) {
+					outStream.close();
+					outStream = null;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return byteCount;
+	}
+	
+	
+	
+	/**
+	 * 读取指定路径的文件
+	 * @param fileName
+	 * @return
+	 */
+	public String readFileFromSDCard(String filePath) {
+		BufferedReader bufRead=null;
+		StringBuffer strBuffer = new StringBuffer();
+		try {
+			File file = new File(filePath);
+			bufRead = new BufferedReader(new FileReader(file));
+			String readline = "";
+			while ((readline = bufRead.readLine()) != null) {
+				strBuffer.append(readline);
+			}
+			System.out.println("读取成功：" + strBuffer.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				if(null != bufRead){
+					bufRead.close();
+					bufRead=null;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	   return strBuffer.toString();
+	}
+	
 
 	/**
 	 * 从SDcard中删除指定的文件
@@ -194,14 +306,14 @@ public class FileUtil {
 	/**
 	 * 根据httpdownLoad文件URL，获取文件本地保存路径
 	 * 
-	 * @param fileURL *文件远程定位符
+	 * @param fileURL
+	 *            *文件远程定位符
 	 * @return 本地保存文件路径
 	 */
 	public String convertHttpUrlToLocalFilePath(String fileUrl) {
 
-		int startIndex = fileUrl.lastIndexOf(File.separator);
-		String fileName = fileUrl.substring(startIndex + 1);
-		String localFilePath = SDCARDPATH + IMAGE_PATH + File.separator	+ fileName;
+		String localFilePath = SDCARDPATH + IMAGE_PATH + File.separator
+				+ fileUrl;
 		return localFilePath;
 	}
 
@@ -220,12 +332,11 @@ public class FileUtil {
 		int startIndex = filePath.lastIndexOf(File.separator);
 		int endIndex = filePath.lastIndexOf(".");
 		if (startIndex > 0 && endIndex > (startIndex + 1)) {
-			fileName = filePath.substring(startIndex + 1,endIndex);
+			fileName = filePath.substring(startIndex + 1, endIndex);
 		}
 		return fileName;
 	}
-	
-	
+
 	private int StrLength(String str) {
 		int reLength = 0;
 		if (null != str && str.length() > 0) {
@@ -241,7 +352,7 @@ public class FileUtil {
 	 *            文件类型
 	 */
 	public void checkMaxFileItemExceedAndProcess() {
-	
+
 		File fileList = new File(getSDCARDPATH() + File.separator + IMAGE_PATH);
 		String[] list = fileList.list();
 		if (list != null && list.length > MAX_FILE_ITEM_SIZE) {
@@ -267,7 +378,6 @@ public class FileUtil {
 		}
 	}
 
-	
 	static class FileComparator implements Comparator<File> {
 		@Override
 		public int compare(File f1, File f2) {
@@ -280,11 +390,14 @@ public class FileUtil {
 	public String getLocalFileDir() {
 		return SDCARDPATH + IMAGE_PATH + File.separator;
 	}
-	
-	public  String convertHttpURLToFileUrl(String url) {
-        if (null !=url && url.length()>0) {
-            return url.replace("%25", "%").replace("%20"," ").replace("%2B","+").replace( "%23","#").replace( "%26","&").replace("%3D","=").replace("%3F","?").replace("%5E","^");
-        }
-        return url;
-    }
+
+	public String convertHttpURLToFileUrl(String url) {
+		if (null != url && url.length() > 0) {
+			return url.replace("%25", "%").replace("%20", " ")
+					.replace("%2B", "+").replace("%23", "#")
+					.replace("%26", "&").replace("%3D", "=")
+					.replace("%3F", "?").replace("%5E", "^");
+		}
+		return url;
+	}
 }

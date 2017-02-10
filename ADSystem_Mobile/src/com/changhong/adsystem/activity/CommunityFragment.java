@@ -1,5 +1,6 @@
 package com.changhong.adsystem.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONObject;
 import android.os.Handler;
@@ -17,8 +18,11 @@ import android.widget.Toast;
 import com.changhong.adsystem.adapter.CommunityAdapter;
 import com.changhong.adsystem.model.Class_Constant;
 import com.changhong.adsystem.model.CommunityInfor;
+import com.changhong.adsystem.model.DeviceInfor;
 import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.utils.AesUtils;
+import com.changhong.adsystem.utils.Configure;
+import com.changhong.adsystem.utils.FileUtil;
 import com.changhong.adsystem.utils.ServiceConfig;
 import com.changhong.adsystem_mobile.R;
 
@@ -167,11 +171,30 @@ public class CommunityFragment extends BaseFragment {
 			break;
 		case R.id.refresh_btn:// 刷新
 			// 搜索小区
-			key = mSearchKey.getText().toString();
-			searchCommunity(key);
+//			key = mSearchKey.getText().toString();
+//			searchCommunity(key);
+			testJson();
+			
 			break;
 		}
 
+	}
+
+	private void testJson(){		
+		List<DeviceInfor> devs=new ArrayList<DeviceInfor>();
+		for (int i = 0; i < 3; i++) {
+			DeviceInfor dev=new DeviceInfor();
+			dev.id=(2000+i)+"";
+			dev.mac="10011"+i;
+			dev.ssid="ch_stb"+i;
+			devs.add(dev);
+		}
+		FragmentTransaction transaction = getFragmentManager()
+				.beginTransaction();
+		transaction.replace(R.id.contentLayout,
+				new StrategyPatternFragment(devs));
+		transaction.addToBackStack(null);
+		transaction.commit();
 	}
 
 }

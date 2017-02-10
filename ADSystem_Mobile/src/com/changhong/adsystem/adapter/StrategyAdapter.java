@@ -11,20 +11,22 @@ import android.widget.TextView;
 import java.util.List;
 
 import com.changhong.adsystem.model.AdStrategyPattern;
+import com.changhong.adsystem.utils.FileUtil;
 import com.changhong.adsystem_mobile.R;
 import com.changhong.common.system.MyApplication;
 
 public class StrategyAdapter extends BaseAdapter {
 
 	private LayoutInflater minflater;
-
 	private List<AdStrategyPattern> strategyList;
 	private Resources res;
-
+	private FileUtil mFileUtil=null;
+	
 	public StrategyAdapter(Context context, List<AdStrategyPattern> strategyList) {
 		this.minflater = LayoutInflater.from(context);
 		this.strategyList = strategyList;
 		res=context.getResources();
+		mFileUtil=new FileUtil();
 
 	}
 
@@ -65,7 +67,7 @@ public class StrategyAdapter extends BaseAdapter {
 			vh.index = (TextView) convertView.findViewById(R.id.ad_index);
 			vh.adLog = (ImageView) convertView.findViewById(R.id.ad_log);
 			vh.name = (TextView) convertView.findViewById(R.id.ad_name);
-//			vh.startDate = (TextView) convertView.findViewById(R.id.ad_startdate);
+			vh.fileNum = (TextView) convertView.findViewById(R.id.ad_filenum);
 			vh.endDate = (TextView) convertView.findViewById(R.id.ad_enddate);
 			vh.adType = (TextView) convertView.findViewById(R.id.ad_filetype);
 			vh.repeat = (TextView) convertView.findViewById(R.id.ad_repeat);
@@ -81,19 +83,24 @@ public class StrategyAdapter extends BaseAdapter {
 			vh.endDate.setText(res.getString(R.string.ab_item_end_date) + oneAd.endDate);
 			vh.adType.setText(res.getString(R.string.ab_item_file_type) + oneAd.minetype);
 			vh.repeat.setText(res.getString(R.string.ad_item_repeat) + oneAd.repeat);
-
-			if (!oneAd.url.equals("")) {
-				MyApplication.imageLoader.displayImage("file://"
-						+ oneAd.url, vh.adLog,MyApplication.viewOptions);
-			}
-
+            if(null != oneAd.urls && oneAd.urls.size()> 0 ){
+    			vh.fileNum.setText(res.getString(R.string.ab_item_file_num) + oneAd.urls.size());
+            	for(String url:oneAd.urls){
+            		if (!url.equals("")) {
+        				MyApplication.imageLoader.displayImage(mFileUtil.convertHttpUrlToLocalFilePath(url) + url, vh.adLog,MyApplication.viewOptions);
+        				break;
+        			}
+            	}
+            }else{
+    			vh.fileNum.setText(res.getString(R.string.ab_item_file_num)+"0");
+            }
 		} else {
 			vh.name.setText("未定义");
 			vh.endDate.setText("00-00-00");
 			vh.adType.setText("");
 			vh.repeat.setText("0");
+			vh.fileNum.setText("0");
 		}
-
 		return convertView;
 	}
 
@@ -103,6 +110,7 @@ public class StrategyAdapter extends BaseAdapter {
 		TextView name;
 		TextView agency;
 		TextView endDate;
+		TextView fileNum;
 		TextView adType;
 		TextView repeat;		
 	}

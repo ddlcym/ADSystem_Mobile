@@ -23,7 +23,8 @@ public class ADMainActivity extends FragmentActivity {
 	// 定义FragmentTabHost对象
 	private FragmentTabHost mTabHost;
 	// 定义数组来存放Fragment界面
-	private final  Class[] fragmentArray = { CommunityFragment.class,DeviceManagerF.class };
+	private final Class[] fragmentArray = { CommunityFragment.class,
+			DeviceManagerF.class };
 	private Intent onHomeIntent; // home键退出后通过intent启动程序
 
 	@Override
@@ -48,8 +49,7 @@ public class ADMainActivity extends FragmentActivity {
 			// 将Tab按钮添加进Tab选项卡中
 			mTabHost.addTab(tabSpec, fragmentArray[i], null);
 			// 设置Tab按钮的背景
-			mTabHost.getTabWidget().getChildAt(i)
-					.setBackgroundResource(R.drawable.tab_selector);
+			mTabHost.getTabWidget().getChildAt(i).setBackgroundResource(R.drawable.tab_selector);
 		}
 		mTabHost.setCurrentTab(0);
 	}
@@ -64,16 +64,29 @@ public class ADMainActivity extends FragmentActivity {
 		return view;
 	}
 
-    public void hideTabHost(){
-    	mTabHost.getTabWidget().setVisibility(View.GONE);
-    }
-    
-    public void showTabHost(){
-    	mTabHost.getTabWidget().setVisibility(View.VISIBLE);
-    }
+	public void hideTabHost() {
+		mTabHost.getTabWidget().setVisibility(View.GONE);
+	}
+
+	public void showTabHost() {
+		mTabHost.getTabWidget().setVisibility(View.VISIBLE);
+	}
+
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-	    //No call for super(). Bug on API Level > 11.
+	protected void onNewIntent(Intent intent) {
+		// 拦截Intent，保存Intent，在onResume中进行处理
+		onHomeIntent = intent;
 	}
+
+	@Override
+	public void onResume() {
+
+		if (onHomeIntent != null) { // home键退出后通过intent启动程序
+			// dosomething···
+			onHomeIntent = null;
+		}
+		super.onResume();
+	}
+	
 }

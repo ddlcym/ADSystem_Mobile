@@ -17,7 +17,6 @@ import com.changhong.common.system.MyApplication;
 public class StrategyAdapter extends BaseAdapter {
 
 	private LayoutInflater minflater;
-
 	private List<AdStrategyPattern> strategyList;
 	private Resources res;
 
@@ -82,10 +81,11 @@ public class StrategyAdapter extends BaseAdapter {
 			vh.adType.setText(res.getString(R.string.ab_item_file_type) + oneAd.minetype);
 			vh.repeat.setText(res.getString(R.string.ad_item_repeat) + oneAd.repeat);
 
-			if (!oneAd.url.equals("")) {
-				MyApplication.imageLoader.displayImage("file://"
-						+ oneAd.url, vh.adLog,MyApplication.viewOptions);
-			}
+			for (String url:oneAd.urls) {
+				if (!url.equals("")) {
+					MyApplication.imageLoader.displayImage(url, vh.adLog,MyApplication.viewOptions);
+				}
+			}	
 
 		} else {
 			vh.name.setText("未定义");

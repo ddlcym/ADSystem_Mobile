@@ -1,5 +1,7 @@
 package com.changhong.adsystem.model;
 
+import java.util.List;
+
 public class AdStrategyPattern {
 	public String id;//设备ID
 	public int defaultDuration;//默认播放持续时间
@@ -9,8 +11,7 @@ public class AdStrategyPattern {
 	public String advertiser;	//名称
 	public String agency;	    //代理
 	public String minetype;//资源类型
-	public int  fileNum; //文件个数
 	public int repeat;//重复次数
-	public String url;	//资源请求路径
+	public List<String> urls;	//资源文件集的路径
 	
 }

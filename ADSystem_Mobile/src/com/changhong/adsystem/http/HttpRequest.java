@@ -9,6 +9,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.changhong.adsystem.model.Class_Constant;
+import com.changhong.adsystem.utils.Configure;
+import com.changhong.adsystem.utils.FileUtil;
 import com.changhong.adsystem.utils.L;
 
 /**
@@ -127,8 +129,9 @@ public class HttpRequest {
 					@Override
 					public void onResponse(org.json.JSONObject arg0) {
 						// TODO Auto-generated method stub
-						 Log.i("mmmm", "HttpRequest***getResidential:" +
-						 arg0);
+						 Log.i("mmmm", "HttpRequest***getResidential:" + arg0);
+						//保存json文件
+						new FileUtil().writeToSDCard(Configure.adBaseFilePath, arg0.toString()); 
 						Message msg=new Message();
 						msg.what=Class_Constant.REQUEST_STRATEPATTERN;
 						msg.obj=arg0;
