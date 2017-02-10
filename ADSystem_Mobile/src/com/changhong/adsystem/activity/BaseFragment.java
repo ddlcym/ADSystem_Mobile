@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.changhong.adsystem.http.HttpRequest;
 import com.changhong.adsystem.p2p.P2PService;
@@ -72,6 +73,14 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
 	}
 
 
+	public void showToast(String notice){
+		Toast.makeText(mActivity, notice, Toast.LENGTH_SHORT).show();		
+	}
+	
+	public void showToast(int resId){
+		Toast.makeText(mActivity, resId, Toast.LENGTH_SHORT).show();		
+	}
+	
 
 	/**
 	 * 按键响应

@@ -135,13 +135,13 @@ public class StrategyPatternFragment extends BaseFragment {
 	 */
 	private void requestStrategy(String mac) {
 		showProgressDialog();
-//		mHttpRequest.getStrategyPatternByMac(uiHander, mac);
-//		uiHander.sendEmptyMessageDelayed(
-//				Class_Constant.POST_HIDE_PROGRESSDIALOG,
-//				ServiceConfig.HTTP_MAX_WATING_TIME);
+		mHttpRequest.getStrategyPatternByMac(uiHander, mac);
+		uiHander.sendEmptyMessageDelayed(
+				Class_Constant.POST_HIDE_PROGRESSDIALOG,
+				ServiceConfig.HTTP_MAX_WATING_TIME);
 
 		//测试用
-		uiHander.sendEmptyMessageDelayed(255, 10000);
+		uiHander.sendEmptyMessageDelayed(255, 5000);
 	}
 
 	/**
@@ -184,7 +184,11 @@ public class StrategyPatternFragment extends BaseFragment {
 		switch (v.getId()) {
 		case R.id.btn_commit:// 上传数据
 			String spJson=JsonResolve.formateAdSPJson();
-			P2PService.creatP2PService().communicationWithBox(uiHander, ServiceConfig.ACTION_P2P_TCPSOCKET, spJson);
+			if(null != spJson){
+				P2PService.creatP2PService().communicationWithBox(uiHander, ServiceConfig.ACTION_P2P_TCPSOCKET, spJson);
+			}else{
+				showToast(R.string.ad_sp_nojson);
+			}
 			break;
 		case R.id.btn_update://下载广告资源文件	
 			downLoadADRes();
