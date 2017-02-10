@@ -131,6 +131,21 @@ public class JsonResolve {
 		return strategyPatterns; 
 	}
 	
+	public static String formateAdSPJson(){
+		JSONObject spObj=new JSONObject();
+		try {
+			String spjson=mFileUtil.readFileFromSDCard(Configure.adBaseFilePath);
+			spjson=spjson.replace(" ", "");
+			JSONObject json = new JSONObject(spjson);
+			spObj.put("urlPrefix", Configure.adResPrefix);
+			spObj.put("body", json);			
+			Log.i("AdSPJson", "formate Json  OK! ");	
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}			
+	  return spObj.toString();
+	}
+	
 	
 	/**
 	 * 转换资源存储地址为本地url地址

@@ -20,6 +20,7 @@ import com.changhong.adsystem.model.AdStrategyPattern;
 import com.changhong.adsystem.model.Class_Constant;
 import com.changhong.adsystem.model.DeviceInfor;
 import com.changhong.adsystem.model.JsonResolve;
+import com.changhong.adsystem.p2p.P2PService;
 import com.changhong.adsystem.utils.AesUtils;
 import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem.utils.FileUtil;
@@ -182,7 +183,8 @@ public class StrategyPatternFragment extends BaseFragment {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_commit:// 上传数据
-            
+			String spJson=JsonResolve.formateAdSPJson();
+			P2PService.creatP2PService().communicationWithBox(uiHander, ServiceConfig.ACTION_P2P_TCPSOCKET, spJson);
 			break;
 		case R.id.btn_update://下载广告资源文件	
 			downLoadADRes();
@@ -195,12 +197,14 @@ public class StrategyPatternFragment extends BaseFragment {
 		}
 	}
 	
+	
 	private void testJson(){
-		FileUtil fileUtil=new FileUtil();
-		String spjson=fileUtil.readFileFromSDCard(Configure.adBaseFilePath+"/spJson.json");
+		FileUtil mFileUtil=new FileUtil();
+		String spjson=mFileUtil.readFileFromSDCard(Configure.adBaseFilePath);
 		spjson=spjson.replace(" ", "");
 		uiHander.sendMessage(uiHander.obtainMessage(Class_Constant.REQUEST_STRATEPATTERN, spjson));
 	}
 
+	
 	
 }

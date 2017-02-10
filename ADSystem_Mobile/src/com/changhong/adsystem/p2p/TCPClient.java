@@ -1,7 +1,7 @@
 package com.changhong.adsystem.p2p;
 
 /**
- * socket通讯 用于手机与盒子端通讯
+ * TCPClient通讯 用于手机与盒子端通讯
  * 
  */
 import java.io.BufferedReader;
@@ -9,27 +9,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import org.apache.http.conn.util.InetAddressUtils;
 import android.util.Log;
 import com.changhong.adsystem.model.JsonObject;
-import com.changhong.adsystem.model.JsonSendModel;
-import com.changhong.adsystem.utils.Configure;
+import com.changhong.adsystem.utils.ServiceConfig;
 
 public class TCPClient {
 
-	String TAG = "SocketClient";
+	String TAG = "TCPClient";
 
 	private static TCPClient mTCPClient = null;
 	public boolean mClientFlag = false;
-	private String hostName;
-	private int portNum;
 	JsonObject resultObject;
 	byte[] theData = null;
 	boolean isReqMedia = false;
@@ -43,14 +38,14 @@ public class TCPClient {
 		return mTCPClient;
 	}
 
-	public Socket getSocket() {
+	private Socket getSocket() {
 		Socket socket = null;
 		try {
-			socket = new Socket(hostName, portNum);
+			socket = new Socket(ServiceConfig.P2P_SERVER_IP, ServiceConfig.P2P_SERVER_PORT);
 		} catch (UnknownHostException e) {
-			System.out.println("-->未知的主机名:" + hostName + " 异常");
+			System.out.println("-->未知的主机名:" + ServiceConfig.P2P_SERVER_IP + " 异常");
 		} catch (IOException e) {
-			System.out.println("-hostName=" + hostName + " portNum=" + portNum
+			System.out.println("-ServiceConfig.P2P_SERVER_IP=" + ServiceConfig.P2P_SERVER_IP + " ServiceConfig.P2P_SERVER_PORT=" + ServiceConfig.P2P_SERVER_PORT
 					+ "---->IO异常错误" + e.getMessage());
 		}
 		return socket;
@@ -59,14 +54,14 @@ public class TCPClient {
 	/**
 	 * 发送数据
 	 * 
-	 * @param SendModel
+	 * @param String 发送信息正文
 	 * @return
 	 */
-	public String sendMessage(String strMessage) {
+	public String sendMessage(String sendMsg) {
 		String str = "";
 		Socket socket = null;
 		PrintWriter out = null;
-		Log.i(TAG, "---->sendMsg is " + strMessage);
+		Log.i(TAG, "---->sendMsg is " + sendMsg);
 
 		try {
 			socket = getSocket();
@@ -76,19 +71,18 @@ public class TCPClient {
 			}
 			//向机顶盒发送信息
 			out = new PrintWriter(socket.getOutputStream());
-			out.println(strMessage);
+			out.println(sendMsg);
 			out.flush();
 			//从机顶盒获取返回消息
 			str = receiveRespond(socket);
+			Log.i(TAG, "socket communication is success! ");
 		} catch (UnknownHostException e) {
-			Log.e(TAG, "---->出现未知主机错误! 主机信息=" + this.hostName + " 端口号="
-					+ this.portNum + " 出错信息=" + e.getMessage());
+			Log.e(TAG, "---->出现未知主机错误! 主机信息=" + ServiceConfig.P2P_SERVER_IP + " 端口号="
+					+ ServiceConfig.P2P_SERVER_PORT + " 出错信息=" + e.getMessage());
 			str = "2191";
-			// System.exit(1);
 		} catch (IOException e) {
-			Log.e(TAG, "---->出现IO异常! 主机信息=" + this.hostName + " 端口号="
-					+ this.portNum + " 出错信息=" + e.getMessage());
-			e.printStackTrace();
+			Log.e(TAG, "---->出现IO异常! 主机信息=" + ServiceConfig.P2P_SERVER_IP + " 端口号="
+					+ ServiceConfig.P2P_SERVER_PORT + " 出错信息=" + e.getMessage());
 			str = "2191";
 		} catch (Exception e) {
 			str = "2177";

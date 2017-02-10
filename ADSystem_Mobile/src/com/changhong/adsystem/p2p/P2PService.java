@@ -5,14 +5,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import com.changhong.adsystem.utils.ServiceConfig;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -56,7 +53,7 @@ public class P2PService {
 	 * 
 	 * @return
 	 */
-	public void communicationWithServer(Handler handler, int communicationType,
+	public void communicationWithBox(Handler handler, int communicationType,
 			String param) {
 
 		mParentHandler = handler;
@@ -80,8 +77,6 @@ public class P2PService {
 			e.printStackTrace();
 		}
 	}
-	
-	
 
 	/********************************************************** clientCommunicationThread *******************************************************************/
 
@@ -103,20 +98,20 @@ public class P2PService {
 					// 接收来之通讯线程的消息
 					switch (communicationType) {
 
-					
 					case ServiceConfig.ACTION_P2P_UDP:
 						sendMsg = (String) msg.obj;
-						if (ServiceConfig.P2P_SERVER_IP != null && sendMsg != null) {
+						if (ServiceConfig.P2P_SERVER_IP != null	&& sendMsg != null) {
 							DatagramSocket dgSocket = null;
 							try {
 								dgSocket = new DatagramSocket();
 								byte b[] = sendMsg.getBytes();
 
-								DatagramPacket dgPacket = new DatagramPacket(b,
+								DatagramPacket dgPacket = new DatagramPacket(
+										b,
 										b.length,
 										InetAddress
 												.getByName(ServiceConfig.P2P_SERVER_IP),
-												ServiceConfig.P2P_SERVER_PORT);
+										ServiceConfig.P2P_SERVER_PORT);
 								dgSocket.send(dgPacket);
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -135,11 +130,11 @@ public class P2PService {
 						break;
 					case ServiceConfig.ACTION_P2P_TCPSOCKET:
 						sendMsg = (String) msg.obj;
-						TCPClient tcpClient=TCPClient.instance();		
-						String result=tcpClient.sendMessage(sendMsg);
+						TCPClient tcpClient = TCPClient.instance();
+						String result = tcpClient.sendMessage(sendMsg);
 						Message respondMsg = mParentHandler.obtainMessage();
 						respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
-						respondMsg.obj=result;
+						respondMsg.obj = result;
 						mParentHandler.sendMessage(respondMsg);
 						break;
 
@@ -155,8 +150,6 @@ public class P2PService {
 			}
 			Looper.loop();
 		}
-
-		
 
 		/**
 		 * 封装发送数据为json 格式
