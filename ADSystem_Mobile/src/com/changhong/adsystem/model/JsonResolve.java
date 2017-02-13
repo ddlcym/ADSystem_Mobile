@@ -1,19 +1,14 @@
 package com.changhong.adsystem.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.util.Log;
 
 import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem.utils.FileUtil;
-
-
-import android.util.Log;
 
 
 /** 

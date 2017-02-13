@@ -3,8 +3,8 @@ package com.changhong.adsystem.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
@@ -71,19 +71,16 @@ public class StrategyPatternFragment extends BaseFragment {
 				switch (msg.what) {
 				case Class_Constant.REQUEST_STRATEPATTERN:
 					hideProgressDialog();
-//					JSONObject jsonObj =JsonResolve.getJsonObj((String) msg.obj);
-//                    if(null == jsonObj)break;
-//					int status = JsonResolve.getJsonObjInt(jsonObj, "status");
-//					String respond = JsonResolve.getJsonObjectString(jsonObj,"body");
-//					if (1000 == status) {
-//						respond=AesUtils.fixDecrypt(respond);
-				    	String respond=(String) msg.obj;
+					JSONObject jsonObj =(JSONObject) msg.obj;
+                    if(null == jsonObj)break;
+					int status = JsonResolve.getJsonObjInt(jsonObj, "status");
+					String respond = JsonResolve.getJsonObjectString(jsonObj,"body");
+					if (1000 == status) {
+						respond=AesUtils.fixDecrypt(respond);
 						mAdSPs = JsonResolve.getStrategyPatterns(respond);					
 						mStrategyAdapter.updateList(mAdSPs);
 						new FileUtil().writeToSDCard(Configure.adBaseFilePath, respond);
-//					}
-					
-					
+					}				
 					break;
 				case Class_Constant.POST_HIDE_PROGRESSDIALOG:
 					hideProgressDialog();

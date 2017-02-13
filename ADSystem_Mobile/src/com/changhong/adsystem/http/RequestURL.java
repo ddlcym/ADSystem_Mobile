@@ -18,6 +18,8 @@ public class RequestURL {
 //	private static String serverIP = "http://192.168.1.101:8080/";
 //	// 验证码请求地址
 	private static String requestParamsURL = serverIP+ "adplatform/mobile/resource.html?json=";
+	private static String requestADResURL = serverIP+ "adplatform/download/configdownload.html?json=";
+
 	//test    	
 //	private static String serverIP = "http://192.168.1.101:8082/";
 //	private static String requestParamsURL = serverIP
@@ -89,14 +91,14 @@ public class RequestURL {
 		JSONObject request = new JSONObject();
 		request.put(HandleResponse.APP_TYPE, "ANDROID");
 		request.put(HandleResponse.APP_VERSION, "1.0");
-		request.put(HandleResponse.BUSINESS_TYPE, MobileBusiness.MOBILE_COMMUNITY_SEARCH);
+//		request.put(HandleResponse.BUSINESS_TYPE, MobileBusiness.MOBILE_COMMUNITY_SEARCH);
 
 		JSONObject body = new JSONObject();
 		body.put("mac", mac);
 		request.put(HandleResponse.REQUEST_BODY,
 				AesUtils.fixEncrypt(body.toJSONString()));
 
-		return requestParamsURL + request.toJSONString();
+		return requestADResURL + request.toJSONString();
 	}
 
 }
