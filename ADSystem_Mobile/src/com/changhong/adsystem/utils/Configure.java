@@ -24,4 +24,8 @@ public class Configure {
 	public final static String  FILE_NOTFOUND= "fileNotFound";
 
 	
+	//UDP通信方式定义
+	
+	public static int UDPQueryResult=3001;
+	
 }
