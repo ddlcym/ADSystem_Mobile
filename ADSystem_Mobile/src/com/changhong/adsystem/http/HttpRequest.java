@@ -12,6 +12,7 @@ import com.changhong.adsystem.model.Class_Constant;
 import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem.utils.FileUtil;
 import com.changhong.adsystem.utils.L;
+import com.changhong.adsystem.utils.ServiceConfig;
 
 /**
  * @author cym
@@ -121,6 +122,8 @@ public class HttpRequest {
 	
 	public void getStrategyPatternByMac(final Handler handler,String mac){
 		String URL = RequestURL.getStrategyPattern(mac);
+		ServiceConfig.MAC=mac;
+
 		L.d(URL);
 		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
 				Request.Method.POST, URL, null,
@@ -131,7 +134,6 @@ public class HttpRequest {
 						// TODO Auto-generated method stub
 						 Log.i("mmmm", "HttpRequest***getResidential:" + arg0);
 						//保存json文件
-						new FileUtil().writeToSDCard(Configure.adBaseFilePath, arg0.toString()); 
 						Message msg=new Message();
 						msg.what=Class_Constant.REQUEST_STRATEPATTERN;
 						msg.obj=arg0;

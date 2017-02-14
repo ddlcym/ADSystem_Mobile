@@ -5,6 +5,8 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.changhong.adsystem.http.RequestURL;
 import com.changhong.adsystem.http.image.loader.cache.LruDiskCache;
 import com.changhong.adsystem.http.image.loader.core.ImageHttpDownloader;
 /**
@@ -31,6 +33,11 @@ public class ImageDownloadTask implements Runnable {
     private final boolean orignalImage;
 
     /**
+     * http image uuid
+     */
+    private final String imageUuid;
+    
+    /**
      * http image url
      */
     private final String imageUri;
@@ -47,10 +54,11 @@ public class ImageDownloadTask implements Runnable {
      */
     public static Map<String, AtomicInteger> subCurrentDownloadThreadCounter = new HashMap<String, AtomicInteger>();
 
-    public ImageDownloadTask(Handler handler, int displayID, boolean orignalImage, String imageUri) {
+    public ImageDownloadTask(Handler handler, int displayID, boolean orignalImage,String uuid,  String imageUri) {
         this.handler = handler;
         this.displayID = displayID;
         this.orignalImage = orignalImage;
+        this.imageUuid=uuid;
         this.imageUri = imageUri;
     }
 
@@ -62,9 +70,9 @@ public class ImageDownloadTask implements Runnable {
         }
 
         //download the image from http to local disk
-        if (imageUri.toLowerCase().startsWith("http://") || imageUri.toLowerCase().startsWith("https://")) {
+        if (null != imageUuid && !imageUuid.isEmpty()) {
             try {
-                ImageHttpDownloader.getStreamFromNetwork(orignalImage, imageUri);
+                ImageHttpDownloader.getStreamFromNetwork(orignalImage, imageUuid,imageUri);
                 LruDiskCache.checkMaxFileItemExceedAndProcess();
                 if (handler != null && displayID > 0) {
                     handler.sendEmptyMessage(displayID);

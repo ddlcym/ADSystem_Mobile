@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.changhong.adsystem.model.HandleResponse;
 import com.changhong.adsystem.model.MobileBusiness;
 import com.changhong.adsystem.utils.AesUtils;
+import com.changhong.adsystem.utils.ServiceConfig;
 
 /**
  * @author cym
@@ -14,11 +15,12 @@ import com.changhong.adsystem.utils.AesUtils;
  * @parameter
  */
 public class RequestURL {
-	private static String serverIP = "http://192.168.1.103:8080/";
-//	private static String serverIP = "http://192.168.1.101:8080/";
+//	private static String serverIP = "http://192.168.1.103:8080/";
+	private static String serverIP = "http://120.76.28.57:8080/";
 //	// 验证码请求地址
 	private static String requestParamsURL = serverIP+ "adplatform/mobile/resource.html?json=";
-	private static String requestADResURL = serverIP+ "adplatform/download/configdownload.html?json=";
+	private static String requestADConfURL = serverIP+ "adplatform/download/phoneconfigdownload.html?json=";
+	private static String requestADResURL = serverIP+ "adplatform/download/phoneaddownload.html?json=";
 
 	//test    	
 //	private static String serverIP = "http://192.168.1.101:8082/";
@@ -91,12 +93,25 @@ public class RequestURL {
 		JSONObject request = new JSONObject();
 		request.put(HandleResponse.APP_TYPE, "ANDROID");
 		request.put(HandleResponse.APP_VERSION, "1.0");
-//		request.put(HandleResponse.BUSINESS_TYPE, MobileBusiness.MOBILE_COMMUNITY_SEARCH);
+		request.put(HandleResponse.REQUEST_MAC, mac);
+//
+//		JSONObject body = new JSONObject();
+//		body.put("mac", mac);
+//		request.put(HandleResponse.REQUEST_BODY,
+//				AesUtils.fixEncrypt(body.toJSONString()));
 
+		return requestADConfURL + request.toJSONString();
+	}
+	
+	
+	public static String getResDownloadURL( String uuid) {
+		JSONObject request = new JSONObject();
+		request.put(HandleResponse.APP_TYPE, "ANDROID");
+		request.put(HandleResponse.APP_VERSION, "1.0");
 		JSONObject body = new JSONObject();
-		body.put("mac", mac);
-		request.put(HandleResponse.REQUEST_BODY,
-				AesUtils.fixEncrypt(body.toJSONString()));
+		body.put("uuid", uuid);
+		request.put(HandleResponse.REQUEST_BODY,AesUtils.fixEncrypt(body.toJSONString()));
+		request.put(HandleResponse.REQUEST_MAC, ServiceConfig.MAC);
 
 		return requestADResURL + request.toJSONString();
 	}

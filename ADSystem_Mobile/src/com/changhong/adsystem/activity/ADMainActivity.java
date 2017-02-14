@@ -14,7 +14,9 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.changhong.adsystem.http.VolleyTool;
+import com.changhong.adsystem.nanohttpd.HTTPDService;
 import com.changhong.adsystem_mobile.R;
+
 
 public class ADMainActivity extends FragmentActivity {
 
@@ -34,6 +36,13 @@ public class ADMainActivity extends FragmentActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_ad_main);
 		initViewAndEvent();
+		
+	
+		/**
+		 * 启动Http服务
+         */
+        Intent http = new Intent(this, HTTPDService.class);
+        startService(http);
 	}
 
 	protected void initViewAndEvent() {

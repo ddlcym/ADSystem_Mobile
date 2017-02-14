@@ -72,9 +72,9 @@ public class ImageLoadController {
      * 1 - check the max number for disk file number is exceed, if exceed, delete oldest fifty
      * 1 - image download task execute
      */
-    public void gotoDownloadWay(Handler handler, boolean orignalImage, String imageUri) {
+    public void gotoDownloadWay(Handler handler, boolean orignalImage,String uuid, String imageUri) {
         if (StringUtils.hasLength(imageUri)) {
-            ImageDownloadTask task = new ImageDownloadTask(handler,ServiceConfig.IMAGE_DOWNLOAD_FINISHED,  orignalImage, imageUri);
+            ImageDownloadTask task = new ImageDownloadTask(handler,ServiceConfig.IMAGE_DOWNLOAD_FINISHED,  orignalImage, uuid,imageUri);
             downloadTaskExecutor.execute(task);
         }
     }

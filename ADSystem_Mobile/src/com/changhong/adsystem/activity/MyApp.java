@@ -5,10 +5,11 @@ import java.io.File;
 import com.changhong.adsystem.http.image.loader.core.ImageLoadController;
 import com.changhong.adsystem.http.image.loader.core.ImageLoaderConfigure;
 import com.changhong.adsystem.http.image.loader.utils.RepositoryUtils;
+import com.changhong.common.system.MyApplication;
 
 import android.app.Application;
 
-public class MyApp extends Application {
+public class MyApp extends MyApplication {
 	private static MyApp instance;
 	public static File imageDownloadRootPath;
 

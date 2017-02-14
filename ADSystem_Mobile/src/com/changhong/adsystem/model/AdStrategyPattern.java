@@ -1,6 +1,6 @@
 package com.changhong.adsystem.model;
 
-import java.util.List;
+import java.util.Map;
 
 public class AdStrategyPattern {
 	public String id;//设备ID
@@ -12,6 +12,6 @@ public class AdStrategyPattern {
 	public String agency;	    //代理
 	public String minetype;//资源类型
 	public int repeat;//重复次数
-	public List<String> urls;	//资源文件集的路径
-	
+	public Map<String,String> imagPaths;	//资源文件集的路径与uuid
+
 }

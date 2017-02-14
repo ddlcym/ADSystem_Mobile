@@ -34,12 +34,10 @@ public class FileUtil {
 
 	public final static int DELETE_ITEM_SIZE = 2;
 
-	
 	public FileUtil() {
 		SDCARDPATH = getSDCARDPATH() + File.separator;
 	}
-	
-	
+
 	/**
 	 * 获取sdcard根目录
 	 * 
@@ -56,8 +54,7 @@ public class FileUtil {
 		}
 		return sdpath;
 	}
-	
-	
+
 	/**
 	 * 判断SDCard是否存在 [当没有外挂SD卡时，内置ROM也被识别为存在sd卡]
 	 * 
@@ -67,9 +64,6 @@ public class FileUtil {
 		return Environment.getExternalStorageState().equals(
 				Environment.MEDIA_MOUNTED);
 	}
-	
-	
-	
 
 	/**
 	 * 在SDcard上创建文件
@@ -78,6 +72,28 @@ public class FileUtil {
 	 * @return File
 	 */
 	public File creatSDFile(String fileName) {
+
+		String dirPath = "";
+		String[] tempPath = fileName.split(File.separator);
+		if (tempPath.length > 2) {
+			for (int i = 0; i < tempPath.length - 1; i++) {
+				dirPath += File.separator + tempPath[i];
+				if (null != dirPath && !dirPath.isEmpty()) {
+					createSDDir(dirPath);
+				}
+			}
+		}
+		File file = new File(fileName);
+		return file;
+	}
+
+	/**
+	 * 在SDcard上创建文件
+	 * 
+	 * @param fileName
+	 * @return File
+	 */
+	public File creatSDFileA(String fileName) {
 		File file = new File(SDCARDPATH + fileName);
 		return file;
 	}
@@ -88,9 +104,9 @@ public class FileUtil {
 	 * @param dirName
 	 */
 	public void createSDDir(String dirName) {
-		File file = new File(SDCARDPATH + dirName);
-		if (!file.exists()) {
-			file.mkdir();
+		File dir = new File(dirName);
+		if (!dir.exists()) {
+			dir.mkdir();
 		}
 	}
 
@@ -125,16 +141,11 @@ public class FileUtil {
 		File file = null;
 		BufferedInputStream in = null;
 		BufferedOutputStream output = null;
-		// 默认状态下，路径为基本文件
-		String path = IMAGE_PATH;
-		try {
-			// 创建文件夹
-			createSDDir(path);
 
-			// 添加文件分隔符
-			path = path + File.separator;
+		try {
+
 			// 创建文件
-			file = creatSDFile(path + fileName);
+			file = creatSDFile(fileName);
 			in = new BufferedInputStream(input, BUFFER_SIZE);
 			output = new BufferedOutputStream(new FileOutputStream(file),
 					BUFFER_SIZE);
@@ -175,15 +186,10 @@ public class FileUtil {
 		File file = null;
 		FileOutputStream outStream = null;
 		OutputStreamWriter writer = null;
-		// 默认状态下，路径为基本文件
-		String path = IMAGE_PATH;
 		try {
-			// 创建文件夹
-			createSDDir(path);
-			// 添加文件分隔符
-			path = path + File.separator;
+			fileName = fileName.trim();
 			// 创建文件
-			file = creatSDFile(path + fileName);
+			file = creatSDFile(fileName);
 			outStream = new FileOutputStream(file);
 			writer = new OutputStreamWriter(outStream, "utf-8");
 			writer.write(content);
@@ -212,16 +218,15 @@ public class FileUtil {
 		}
 		return byteCount;
 	}
-	
-	
-	
+
 	/**
 	 * 读取指定路径的文件
+	 * 
 	 * @param fileName
 	 * @return
 	 */
 	public String readFileFromSDCard(String filePath) {
-		BufferedReader bufRead=null;
+		BufferedReader bufRead = null;
 		StringBuffer strBuffer = new StringBuffer();
 		try {
 			File file = new File(filePath);
@@ -233,19 +238,18 @@ public class FileUtil {
 			System.out.println("读取成功：" + strBuffer.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally{
+		} finally {
 			try {
-				if(null != bufRead){
+				if (null != bufRead) {
 					bufRead.close();
-					bufRead=null;
+					bufRead = null;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-	   return strBuffer.toString();
+		return strBuffer.toString();
 	}
-	
 
 	/**
 	 * 从SDcard中删除指定的文件
@@ -312,7 +316,7 @@ public class FileUtil {
 	 */
 	public String convertHttpUrlToLocalFilePath(String fileUrl) {
 
-		String localFilePath = SDCARDPATH + IMAGE_PATH + File.separator
+		String localFilePath = Configure.adResFilePath + File.separator
 				+ fileUrl;
 		return localFilePath;
 	}

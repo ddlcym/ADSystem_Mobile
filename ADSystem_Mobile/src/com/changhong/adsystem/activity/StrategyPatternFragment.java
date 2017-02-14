@@ -51,6 +51,7 @@ public class StrategyPatternFragment extends BaseFragment {
 
 	@Override
 	protected void initViewAndEvent(View v) {
+		
 		mStrategyList = (ListView) v.findViewById(R.id.strategy_list);
 		mdevSelectList = (ListView) v.findViewById(R.id.dev_list);
 		mStrategyAdapter = new StrategyAdapter(mActivity, mAdSPs);
@@ -85,14 +86,18 @@ public class StrategyPatternFragment extends BaseFragment {
 				case Class_Constant.POST_HIDE_PROGRESSDIALOG:
 					hideProgressDialog();
 					break;
+					
+				case ServiceConfig.IMAGE_DOWNLOAD_START:
+					downLoadADRes();
+					break;
 				case ServiceConfig.IMAGE_EXIST:
 					break;
 				case ServiceConfig.IMAGE_DOWNLOAD_FINISHED:
+					mStrategyAdapter.notifyDataSetChanged();
 					break;
 				case ServiceConfig.IMAGE_DOWNLOAD_FAILED:
 					break;
 				default:
-					testJson();
 					break;
 
 				}
@@ -107,7 +112,7 @@ public class StrategyPatternFragment extends BaseFragment {
 
 	private void initDevlist(View v) {
 		focusDev = (TextView) v.findViewById(R.id.title);
-		focusDev.setText("STB_" + devList.get(curDevIndex).mac);
+		focusDev.setText(R.string.ab_dev_title + devList.get(curDevIndex).mac);
 		mDeviceSelectAdapter = new DeviceSelectAdapter(mActivity, devList);
 		mdevSelectList.setAdapter(mDeviceSelectAdapter);
 		mdevSelectList.setOnItemClickListener(new OnItemClickListener() {
@@ -136,9 +141,6 @@ public class StrategyPatternFragment extends BaseFragment {
 		uiHander.sendEmptyMessageDelayed(
 				Class_Constant.POST_HIDE_PROGRESSDIALOG,
 				ServiceConfig.HTTP_MAX_WATING_TIME);
-
-		//测试用
-		uiHander.sendEmptyMessageDelayed(255, 5000);
 	}
 
 	/**
@@ -159,11 +161,11 @@ public class StrategyPatternFragment extends BaseFragment {
 	private void downLoadADRes(){
 		ImageLoadController imgCtr=ImageLoadController.getInstance();
 		for(AdStrategyPattern adsp : mAdSPs){
-			int size=adsp.urls.size();
-			for (int i = 0; i < size; i++) {
-				String imagePath=adsp.urls.get(i);
+			
+			for(String uuid : adsp.imagPaths.keySet()){
+				String imagePath=adsp.imagPaths.get(uuid);
 				if(!imgCtr.imageIsExist(imagePath)){
-					imgCtr.gotoDownloadWay(uiHander, true, imagePath);
+					imgCtr.gotoDownloadWay(uiHander, false, uuid, imagePath);
 				}
 			}			
 		}		
@@ -207,5 +209,8 @@ public class StrategyPatternFragment extends BaseFragment {
 	}
 
 	
+	
+	
+	/****************************************************重写系统方法********************************************/
 	
 }

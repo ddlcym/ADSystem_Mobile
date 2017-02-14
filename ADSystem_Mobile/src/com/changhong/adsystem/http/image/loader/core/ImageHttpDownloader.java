@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.changhong.adsystem.http.RequestURL;
 import com.changhong.adsystem.http.image.loader.cache.DiskCacheFilenameGenerator;
 import com.changhong.adsystem.http.image.loader.exception.ThreadKillException;
 import com.changhong.adsystem.http.image.loader.task.ImageDownloadSubTask;
@@ -44,8 +45,9 @@ public class ImageHttpDownloader {
      * @param originalImage the parameter which used for decide this is original image or not
      * @param imageUri http image url
      */
-    public static void getStreamFromNetwork(boolean originalImage, String imageUri) throws IOException {
-        HttpURLConnection conn = createConnection(imageUri);
+    public static void getStreamFromNetwork(boolean originalImage,String uuid, String imageUri) throws IOException {
+        String url=RequestURL.getResDownloadURL(uuid);
+    	HttpURLConnection conn = createConnection(url);
         int contentLength = conn.getContentLength();
 
         if (contentLength <= MUTI_THREAD_SIZE_POINT) {
@@ -68,9 +70,11 @@ public class ImageHttpDownloader {
         try {
             imageStream = conn.getInputStream();
             file = DiskCacheFilenameGenerator.getDiskCacheFile(imageUri);
-            in = new BufferedInputStream(imageStream, BUFFER_SIZE);
-            out = new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
-            copy(originalImage, in, out);
+            if(!file.exists()){
+	            in = new BufferedInputStream(imageStream, BUFFER_SIZE);
+	            out = new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);            
+	            copy(originalImage, in, out);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             if (file != null && file.exists()) {

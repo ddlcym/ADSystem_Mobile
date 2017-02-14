@@ -4,8 +4,9 @@ package com.changhong.adsystem.utils;
 public class ServiceConfig {
 	
 
-    public static String P2P_SERVER_IP = "0:0:0:0";
+    public static String P2P_SERVER_IP = "192.168.1.100";
     public static int P2P_SERVER_PORT = 20147;
+	public static String MAC="12:12:5D:13:B5:1F";
 
 	//执行结果定义
   	public final static String  ACTION_SUCCESS= "success";
@@ -13,6 +14,7 @@ public class ServiceConfig {
   	public static final int SHOW_ACTION_RESULT = 0;
 	
 	/***********************************************通信方式定义********************************************************/
+  	
 	public final static int ACTION_HTTP_DOWNLOAD= 1001;//数据下载
 	public final static int ACTION_P2P_TCPSOCKET= 1002;//P2P-TCPIP通讯方式
 	public final static int ACTION_P2P_UDP= 1003;//P2P-UDP通讯方式

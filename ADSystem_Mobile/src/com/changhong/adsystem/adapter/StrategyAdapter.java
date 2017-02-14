@@ -8,9 +8,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.File;
 import java.util.List;
 
 import com.changhong.adsystem.model.AdStrategyPattern;
+import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem.utils.FileUtil;
 import com.changhong.adsystem_mobile.R;
 import com.changhong.common.system.MyApplication;
@@ -83,11 +86,12 @@ public class StrategyAdapter extends BaseAdapter {
 			vh.endDate.setText(res.getString(R.string.ab_item_end_date) + oneAd.endDate);
 			vh.adType.setText(res.getString(R.string.ab_item_file_type) + oneAd.minetype);
 			vh.repeat.setText(res.getString(R.string.ad_item_repeat) + oneAd.repeat);
-            if(null != oneAd.urls && oneAd.urls.size()> 0 ){
-    			vh.fileNum.setText(res.getString(R.string.ab_item_file_num) + oneAd.urls.size());
-            	for(String url:oneAd.urls){
+            if(null != oneAd.imagPaths && oneAd.imagPaths.size()> 0 ){
+    			vh.fileNum.setText(res.getString(R.string.ab_item_file_num) + oneAd.imagPaths.size());   			
+    			for (String key : oneAd.imagPaths.keySet()) {
+    				String url = oneAd.imagPaths.get(key);
             		if (!url.equals("")) {
-        				MyApplication.imageLoader.displayImage(mFileUtil.convertHttpUrlToLocalFilePath(url) + url, vh.adLog,MyApplication.viewOptions);
+                  	    MyApplication.imageLoader.displayImage("file://"+Configure.adResFilePath+File.separator+ url, vh.adLog);        				
         				break;
         			}
             	}

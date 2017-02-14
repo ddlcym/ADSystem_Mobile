@@ -1,6 +1,7 @@
 package com.changhong.adsystem.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -105,17 +106,17 @@ public class JsonResolve {
 				adStrat.endDate=getJsonObjectString(itemObj,"endDate");
 				JSONArray files=getJsonObjectArray(itemObj,"files");
 				int fileNum=(null == files)?0:files.length();
-				adStrat.urls=new ArrayList<String>();
+				adStrat.imagPaths=new HashMap<String,String>();
                 for (int j = 0; j < fileNum; j++) {
     				JSONObject fileObj=files.getJSONObject(j);
     				String url=getJsonObjectString(fileObj,"url");
+    				String uuid=getJsonObjectString(fileObj,"uuid");
     				String minetype=getJsonObjectString(fileObj,"mineType");
                     if(null == adStrat.minetype){
                     	adStrat.minetype=minetype;
     				}
-    				if(null != url && url.length()>2){
-    					adStrat.urls.add(url);
-    					break;
+    				if(null != uuid && uuid.length()>0){
+    					adStrat.imagPaths.put(uuid, url);
     				}   				
 				}				
 				strategyPatterns.add(adStrat);
