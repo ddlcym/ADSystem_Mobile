@@ -1,7 +1,10 @@
 package com.changhong.adsystem.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap.Config;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.view.LayoutInflater;
@@ -9,11 +12,14 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AbsoluteLayout.LayoutParams;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.changhong.adsystem.http.VolleyTool;
+import com.changhong.adsystem.p2p.UDPQuerySingleThread;
+import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem.nanohttpd.HTTPDService;
 import com.changhong.adsystem_mobile.R;
 
@@ -28,7 +34,21 @@ public class ADMainActivity extends FragmentActivity {
 	private final Class[] fragmentArray = { CommunityFragment.class,
 			DeviceManagerF.class };
 	private Intent onHomeIntent; // home键退出后通过intent启动程序
+	
+	private Handler handler=new Handler(){
 
+		@Override
+		public void handleMessage(Message msg) {
+			// TODO Auto-generated method stub
+			switch (msg.what){
+				case Configure.UDPQueryTimeOut:
+					Toast.makeText(ADMainActivity.this, "未发现设备", Toast.LENGTH_SHORT).show();
+					break;
+			}
+		}
+		
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -36,6 +56,7 @@ public class ADMainActivity extends FragmentActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_ad_main);
 		initViewAndEvent();
+		sendUDPQurey();
 		
 	
 		/**
@@ -96,6 +117,10 @@ public class ADMainActivity extends FragmentActivity {
 			onHomeIntent = null;
 		}
 		super.onResume();
+	}
+	
+	private void sendUDPQurey(){
+		new UDPQuerySingleThread(handler).start();
 	}
 	
 }

@@ -193,6 +193,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (arg0.getId()) {
 		case R.id.login: // 登陆
+			strContent=et_pass.getText().toString().trim();
 			HttpRequest.getInstance().login(UiMangerHandler,mobile, strContent);
 
 			break;
@@ -204,6 +205,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 			
 			// 发送验证码到服务器
 			mobile=et_name.getText().toString().trim();
+			
 			if(mobile.length()==11){
 				HttpRequest.getInstance().postSecurityCode(UiMangerHandler, mobile);
 				time.start();

@@ -12,6 +12,7 @@ public class UDPData {
 	private String UDPQueryResult="";
 	private static UDPData udpData;
 	private SocketAddress serverAddress;//服务端地址
+	private int serverPort;//服务器端口
 	
 	public static UDPData getInstance(){
 		if(null==udpData){
@@ -35,6 +36,14 @@ public class UDPData {
 
 	public void setServerAddress(SocketAddress serverAddress) {
 		this.serverAddress = serverAddress;		
+	}
+
+	public int getServerPort() {
+		return serverPort;
+	}
+
+	public void setServerPort(int serverPort) {
+		this.serverPort = serverPort;
 	}
 	
 	

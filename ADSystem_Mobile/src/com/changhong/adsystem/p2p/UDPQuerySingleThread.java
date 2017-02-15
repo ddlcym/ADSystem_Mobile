@@ -35,9 +35,6 @@ public class UDPQuerySingleThread extends Thread {
 	
 	
 	private int localPort;
-	private byte[] netBuffer = new byte[4];
-	private byte[] IPBuffer = new byte[4];
-	private byte[] macBuffer = new byte[6];
 	private SocketAddress remoteAddress = null;
 	private DatagramChannel channel = null;
 	public boolean flag = false;
@@ -46,16 +43,13 @@ public class UDPQuerySingleThread extends Thread {
 	byte[] sendCache;
 	private int sleepTime = 100;
 	private int reTryTimes=15;
-
+	private int count;
 	private State state = State.FREE;
-
 	private enum State {
 		FREE, QUERY, END
 	}
 
-	private int count;
-	
-	private Handler parentHandler;
+	private Handler parentHandle;
 
 	private LinkedList<byte[]> dataList;
 	private LinkedList<SocketAddress> socketList;
@@ -64,8 +58,9 @@ public class UDPQuerySingleThread extends Thread {
 	
 	
 	
+
 	public UDPQuerySingleThread(Handler handler) {
-		parentHandler=handler;
+		this.parentHandle=handler;
 	}
 
 	@Override
@@ -122,7 +117,7 @@ public class UDPQuerySingleThread extends Thread {
 					try {
 						String result=getHexString(cache);
 						if(result.contains("_serviceRespond")){
-							UDPData.getInstance().setServerAddress(serverAddress);
+							UDPData.getInstance().setServerAddress(serverAddress);//保存服务器IP
 							dealCache(result);
 						}
 					} catch (Exception e) {
@@ -181,6 +176,7 @@ public class UDPQuerySingleThread extends Thread {
 			if (count > reTryTimes) {
 				state = State.END;
 				count = 0;
+				parentHandle.sendEmptyMessage(Configure.UDPQueryTimeOut);//未找到设备
 			} else if (0 == count % 5) {
 				dataList.add(sendCache);
 				socketList.add(remoteAddress);
@@ -211,7 +207,6 @@ public class UDPQuerySingleThread extends Thread {
 
 	private void dealCache(String result) {
 		UDPData.getInstance().setUDPQueryResult(result);
-		parentHandler.sendEmptyMessage(Configure.UDPQueryResult);
 		state = State.END;
 	}
 	
@@ -220,4 +215,5 @@ public class UDPQuerySingleThread extends Thread {
 	public void stopQuery(){
 		flag=false;
 	}
+	
 }
