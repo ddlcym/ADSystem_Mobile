@@ -196,7 +196,6 @@ public class StrategyPatternFragment extends BaseFragment {
 			MyApplication.vibrator.vibrate(100);
 			mdevSelectList.setVisibility(View.VISIBLE);
 			break;
-
 		}
 	}
 	

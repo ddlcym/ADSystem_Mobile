@@ -15,9 +15,9 @@ import com.changhong.adsystem.utils.ServiceConfig;
  * @parameter
  */
 public class RequestURL {
-	private static String serverIP = "http://192.168.1.102:8080/";
+//	private static String serverIP = "http://192.168.1.102:8080/";
 //	private static String serverIP = "http://192.168.1.101:8080/";
-//	private static String serverIP = "http://120.76.28.57:8080/";
+	private static String serverIP = "http://120.76.28.57:8080/";
 //	// 验证码请求地址
 	private static String requestParamsURL = serverIP+ "adplatform/mobile/resource.html?json=";
 	private static String requestADConfURL = serverIP+ "adplatform/download/phoneconfigdownload.html?json=";
