@@ -1,9 +1,10 @@
 package com.changhong.adsystem.activity;
 
+import com.changhong.adsystem_mobile.R;
+
 import android.view.View;
 import android.widget.TextView;
 
-import com.changhong.adsystem_mobile.R;
 
 public class DeviceManagerF extends BaseFragment {
 

@@ -241,9 +241,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 	 * 登陆
 	 */
 	private void login() {
-
 		Intent intent = new Intent(LoginActivity.this, ADMainActivity.class);
 		startActivity(intent);
+		finish();
 	}
 
 	/**
