@@ -29,5 +29,17 @@ public class ServiceConfig {
 	public final static int IMAGE_EXIST= 2001;//文件已经存在
 	public final static int IMAGE_DOWNLOAD_FINISHED= 2002;//文件下载完成
 	public final static int IMAGE_DOWNLOAD_FAILED= 2003;//文件下载失败
+	
+	/********************************************与STB通讯的常量定义************************************************************************/
+  	public final static String  TCP_SOCKET_ACTION= "action";
+  	public final static String  TCP_SOCKET_REQUEST= "request";
+  	public final static String  TCP_SOCKET_RESPOND= "response";
+  	
+  	public final static String  TCPS_ACTION_STBINFOR= "getSTBInfo";
+  	public final static String  TCPS_ACTION_DOWNLOADCONF= "pushDownloadConf";
+  	
+  	public final static int  TCPS_ACTION_STBINFOR_CODE= 3001;
+  	public final static int  TCPS_ACTION_DOWNLOADCONF_CODE= 3002;
 
+  	
 }

@@ -34,7 +34,7 @@ public class UDPData {
 	}
 
 	public void setServerAddress(SocketAddress serverAddress) {
-		this.serverAddress = serverAddress;
+		this.serverAddress = serverAddress;		
 	}
 	
 	

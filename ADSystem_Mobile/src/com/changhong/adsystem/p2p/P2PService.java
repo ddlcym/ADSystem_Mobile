@@ -9,7 +9,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import com.changhong.adsystem.model.JsonResolve;
+import com.changhong.adsystem.model.JsonSendModel;
 import com.changhong.adsystem.utils.ServiceConfig;
+
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -53,15 +58,14 @@ public class P2PService {
 	 * 
 	 * @return
 	 */
-	public void communicationWithBox(Handler handler, int communicationType,
-			String param) {
+	public void communicationWithBox(Handler handler,int action,String msg) {
 
 		mParentHandler = handler;
 		// 发送消息给子线程
 		if (null != mMsgHandler) {
 			Message sendMsg = mMsgHandler.obtainMessage();
-			sendMsg.what = communicationType;
-			sendMsg.obj = param;
+			sendMsg.arg1 = action;
+			sendMsg.obj = msg;
 			mMsgHandler.sendMessage(sendMsg);
 		}
 	}
@@ -82,7 +86,7 @@ public class P2PService {
 
 	private class clientCommunicationThread implements Runnable {
 
-		int communicationType;
+		String mAction="";
 
 		@Override
 		public void run() {
@@ -91,57 +95,24 @@ public class P2PService {
 			Looper.prepare();
 
 			mMsgHandler = new Handler() {
-
 				public void handleMessage(Message msg) {
 					String sendMsg = null;
-					communicationType = msg.what;
-					// 接收来之通讯线程的消息
-					switch (communicationType) {
-
-					case ServiceConfig.ACTION_P2P_UDP:
-						sendMsg = (String) msg.obj;
-						if (ServiceConfig.P2P_SERVER_IP != null	&& sendMsg != null) {
-							DatagramSocket dgSocket = null;
-							try {
-								dgSocket = new DatagramSocket();
-								byte b[] = sendMsg.getBytes();
-
-								DatagramPacket dgPacket = new DatagramPacket(
-										b,
-										b.length,
-										InetAddress
-												.getByName(ServiceConfig.P2P_SERVER_IP),
-										ServiceConfig.P2P_SERVER_PORT);
-								dgSocket.send(dgPacket);
-							} catch (Exception e) {
-								e.printStackTrace();
-							} finally {
-								try {
-									if (dgSocket != null) {
-										dgSocket.close();
-									}
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-						} else {
-							Log.e(Tag, "未获取到服务器IP");
-						}
-						break;
-					case ServiceConfig.ACTION_P2P_TCPSOCKET:
-						sendMsg = (String) msg.obj;
+					mAction = matchAction(msg.arg1);
+					sendMsg = (String) msg.obj;					
+					if(null != mAction && !mAction.isEmpty()
+							&& null != sendMsg  && sendMsg.isEmpty()){
+						sendMsg=JsonSendModel.formateTcpSendMsg(mAction, sendMsg);				
 						TCPClient tcpClient = TCPClient.instance();
 						String result = tcpClient.sendMessage(sendMsg);
-						Message respondMsg = mParentHandler.obtainMessage();
-						respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
-						respondMsg.obj = result;
-						mParentHandler.sendMessage(respondMsg);
-						break;
-
+						if(null != mParentHandler){
+							Message respondMsg = mParentHandler.obtainMessage();
+							respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
+							respondMsg.obj = JsonResolve.getTcpReponse(result);
+							mParentHandler.sendMessage(respondMsg);
+						}
 					}
 				}
 			};
-
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
@@ -194,6 +165,16 @@ public class P2PService {
 
 	}
 
+	
+	
+	private String matchAction(int actionInt){
+		String action="";
+		if(ServiceConfig.TCPS_ACTION_STBINFOR_CODE == actionInt)action=ServiceConfig.TCPS_ACTION_STBINFOR;
+		else if(ServiceConfig.TCPS_ACTION_DOWNLOADCONF_CODE == actionInt)action=ServiceConfig.TCPS_ACTION_DOWNLOADCONF;
+		else if(ServiceConfig.TCPS_ACTION_STBINFOR_CODE == actionInt)action=ServiceConfig.TCPS_ACTION_STBINFOR;
+		return action;
+	}
+	
 	/**
 	 * 特殊字符还原
 	 * 

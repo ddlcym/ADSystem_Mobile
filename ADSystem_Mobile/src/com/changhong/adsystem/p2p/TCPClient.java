@@ -11,12 +11,12 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import org.apache.http.conn.util.InetAddressUtils;
 import android.util.Log;
-import com.changhong.adsystem.model.JsonObject;
 import com.changhong.adsystem.utils.ServiceConfig;
 
 public class TCPClient {
@@ -25,7 +25,6 @@ public class TCPClient {
 
 	private static TCPClient mTCPClient = null;
 	public boolean mClientFlag = false;
-	JsonObject resultObject;
 	byte[] theData = null;
 	boolean isReqMedia = false;
 	PrintWriter mOutput = null;
@@ -38,18 +37,7 @@ public class TCPClient {
 		return mTCPClient;
 	}
 
-	private Socket getSocket() {
-		Socket socket = null;
-		try {
-			socket = new Socket(ServiceConfig.P2P_SERVER_IP, ServiceConfig.P2P_SERVER_PORT);
-		} catch (UnknownHostException e) {
-			System.out.println("-->未知的主机名:" + ServiceConfig.P2P_SERVER_IP + " 异常");
-		} catch (IOException e) {
-			System.out.println("-ServiceConfig.P2P_SERVER_IP=" + ServiceConfig.P2P_SERVER_IP + " ServiceConfig.P2P_SERVER_PORT=" + ServiceConfig.P2P_SERVER_PORT
-					+ "---->IO异常错误" + e.getMessage());
-		}
-		return socket;
-	}
+	
 
 	/**
 	 * 发送数据
@@ -64,17 +52,18 @@ public class TCPClient {
 		Log.i(TAG, "---->sendMsg is " + sendMsg);
 
 		try {
-			socket = getSocket();
-			if (socket == null) { // 未能得到指定的Socket对象,Socket通讯为空
-				return "0001";
+			socket = new Socket();
+			SocketAddress socketAddress=UDPData.getInstance().getServerAddress();
+			socket.connect(socketAddress, 10000);
+			if (socket.isConnected()) { // 未能得到指定的Socket对象,Socket通讯为空				
+				//向机顶盒发送信息
+				out = new PrintWriter(socket.getOutputStream());
+				out.println(sendMsg);
+				out.flush();
+				//从机顶盒获取返回消息
+				str = receiveRespond(socket);
+				Log.i(TAG, "socket communication is success! ");
 			}
-			//向机顶盒发送信息
-			out = new PrintWriter(socket.getOutputStream());
-			out.println(sendMsg);
-			out.flush();
-			//从机顶盒获取返回消息
-			str = receiveRespond(socket);
-			Log.i(TAG, "socket communication is success! ");
 		} catch (UnknownHostException e) {
 			Log.e(TAG, "---->出现未知主机错误! 主机信息=" + ServiceConfig.P2P_SERVER_IP + " 端口号="
 					+ ServiceConfig.P2P_SERVER_PORT + " 出错信息=" + e.getMessage());

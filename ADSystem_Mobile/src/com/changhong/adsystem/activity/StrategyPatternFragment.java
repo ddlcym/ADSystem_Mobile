@@ -171,7 +171,6 @@ public class StrategyPatternFragment extends BaseFragment {
 		}		
 	}
 	
-	
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -182,12 +181,12 @@ public class StrategyPatternFragment extends BaseFragment {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_commit:// 上传数据
-			String spJson=JsonResolve.formateAdSPJson();
-			if(null != spJson){
-				P2PService.creatP2PService().communicationWithBox(uiHander, ServiceConfig.ACTION_P2P_TCPSOCKET, spJson);
-			}else{
-				showToast(R.string.ad_sp_nojson);
-			}
+//			String spJson=JsonResolve.formateAdSPJson();
+//			if(null != spJson){
+//				P2PService.creatP2PService().communicationWithBox(uiHander, ServiceConfig.ACTION_P2P_TCPSOCKET, spJson);
+//			}else{
+//				showToast(R.string.ad_sp_nojson);
+//			}
 			break;
 		case R.id.btn_update://下载广告资源文件	
 			downLoadADRes();
