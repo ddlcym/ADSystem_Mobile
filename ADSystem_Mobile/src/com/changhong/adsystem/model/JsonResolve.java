@@ -184,6 +184,28 @@ public class JsonResolve {
 		return reContent;
 
 	}
+	
+	public static DeviceInfor resolveDeviceInfo(String result){
+		DeviceInfor device=new DeviceInfor();
+		JSONObject obj=null;
+		try {
+			obj=new JSONObject(result);
+			device.setAdResouseId(getJsonObjectString(obj, "adResouseId"));
+			device.setAppVersion(getJsonObjInt(obj, "appVersion"));
+			device.setMac(getJsonObjectString(obj, "mac"));
+			device.setMemoryAvailable(Long.parseLong(getJsonObjectString(obj, "memoryAvailable")));
+			device.setMemoryTotal(Long.parseLong(getJsonObjectString(obj, "memoryTotal")));
+			device.setStbHardwareVersion(getJsonObjectString(obj, "stbFirmwareVersion"));
+			device.setStbSoftwareVersion(getJsonObjectString(obj, "stbHardwareVersion"));
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return device;
+	}
 
 	// ======================================捕获json解析异常=========================
 
@@ -215,6 +237,18 @@ public class JsonResolve {
 		int i = 9999;
 		try {
 			i = json.getInt(key);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Log.e("mmmm", "JsonResolve:" + key);
+		}
+		return i;
+	}
+	
+	public static long getJsonObjLong(JSONObject json, String key) {
+		long i = 9999;
+		try {
+			i = json.getLong(key);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

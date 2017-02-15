@@ -173,28 +173,28 @@ public class CommunityFragment extends BaseFragment {
 			// 搜索小区
 //			key = mSearchKey.getText().toString();
 //			searchCommunity(key);
-			testJson();
+//			testJson();
 			
 			break;
 		}
 
 	}
 
-	private void testJson(){		
-		List<DeviceInfor> devs=new ArrayList<DeviceInfor>();
-		for (int i = 0; i < 3; i++) {
-			DeviceInfor dev=new DeviceInfor();
-			dev.id=(2000+i)+"";
-			dev.mac="10011"+i;
-			dev.ssid="ch_stb"+i;
-			devs.add(dev);
-		}
-		FragmentTransaction transaction = getFragmentManager()
-				.beginTransaction();
-		transaction.replace(R.id.contentLayout,
-				new StrategyPatternFragment(devs));
-		transaction.addToBackStack(null);
-		transaction.commit();
-	}
+//	private void testJson(){		
+//		List<DeviceInfor> devs=new ArrayList<DeviceInfor>();
+//		for (int i = 0; i < 3; i++) {
+//			DeviceInfor dev=new DeviceInfor();
+//			dev.id=(2000+i)+"";
+//			dev.mac="10011"+i;
+//			dev.ssid="ch_stb"+i;
+//			devs.add(dev);
+//		}
+//		FragmentTransaction transaction = getFragmentManager()
+//				.beginTransaction();
+//		transaction.replace(R.id.contentLayout,
+//				new StrategyPatternFragment(devs));
+//		transaction.addToBackStack(null);
+//		transaction.commit();
+//	}
 
 }

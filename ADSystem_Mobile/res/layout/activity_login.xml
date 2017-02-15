@@ -2,7 +2,8 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:fitsSystemWindows="true" >
+    android:fitsSystemWindows="true"
+    android:background="@drawable/bg" >
 
     <RelativeLayout
         android:id="@+id/login_layout"
@@ -11,12 +12,22 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:gravity="center" >
+        
+        <ImageView 
+            android:id="@+id/user_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/user_icon"
+            android:layout_centerHorizontal="true"
+            />
 
         <FrameLayout
             android:id="@+id/username_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="55dp"
+            android:layout_below="@id/user_icon"
+            android:layout_marginTop="25dp"
             android:gravity="center" >
 
             <EditText

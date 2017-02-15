@@ -45,5 +45,17 @@ public class JsonPackage {
 		}
 		return (null == json) ? "" : json.toString();
 	}
+	
+	public static String queryDeviceInfoParams(){
+		JSONObject obj=new JSONObject();
+		try {
+			JSONObject json = new JSONObject();
+			obj.put("action","getSTBInfo");
+			obj.put("request", json);			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}			
+	  return obj.toString();
+	}
 
 }
