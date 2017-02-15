@@ -124,8 +124,6 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
 			}
 		}
 	}
-
-
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {

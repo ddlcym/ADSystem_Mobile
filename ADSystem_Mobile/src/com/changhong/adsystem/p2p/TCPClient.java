@@ -65,7 +65,6 @@ public class TCPClient {
 
 		try {
 			socket = getSocket();
-			// socket.setKeepAlive(true);
 			if (socket == null) { // 未能得到指定的Socket对象,Socket通讯为空
 				return "0001";
 			}
