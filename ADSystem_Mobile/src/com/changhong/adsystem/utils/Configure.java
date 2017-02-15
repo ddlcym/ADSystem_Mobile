@@ -9,10 +9,11 @@ public class Configure {
 	//广告策略文件转存地址：
 	
 	public static String rootPath=Environment.getExternalStorageDirectory().getAbsolutePath();
-	public static String adBaseFilePath=rootPath+File.separator+"adSystem/baseFile/spJson.json";
-	public static String adResFilePath=rootPath+File.separator+"adSystem/res";
-	public static String adResPrefix="adSystem/";
 
+	public static String adBaseFileSuffix="adSystem/baseFile/spJson.json";
+	public static String adResPrefix="adSystem/res";
+	public static String adBaseFilePath=rootPath+File.separator+adBaseFileSuffix;
+	public static String adResFilePath=rootPath+File.separator+adResPrefix;
 	/***************************************************文件定义************************************************************/
 	public final static String  FILE_TYPE= "fileType";
 	public final static String  FILE_EDIT= "fileEdit";

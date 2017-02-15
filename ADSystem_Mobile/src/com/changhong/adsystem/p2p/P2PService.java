@@ -4,14 +4,18 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
+import java.net.SocketException;
+import java.util.Enumeration;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import com.changhong.adsystem.model.JsonResolve;
-import com.changhong.adsystem.model.JsonSendModel;
+import com.changhong.adsystem.model.JsonPackage;
 import com.changhong.adsystem.utils.ServiceConfig;
 
 import android.os.Bundle;
@@ -58,7 +62,7 @@ public class P2PService {
 	 * 
 	 * @return
 	 */
-	public void communicationWithBox(Handler handler,int action,String msg) {
+	public void communicationWithBox(Handler handler, int action, String msg) {
 
 		mParentHandler = handler;
 		// 发送消息给子线程
@@ -86,7 +90,7 @@ public class P2PService {
 
 	private class clientCommunicationThread implements Runnable {
 
-		String mAction="";
+		String mAction = "";
 
 		@Override
 		public void run() {
@@ -98,13 +102,14 @@ public class P2PService {
 				public void handleMessage(Message msg) {
 					String sendMsg = null;
 					mAction = matchAction(msg.arg1);
-					sendMsg = (String) msg.obj;					
-					if(null != mAction && !mAction.isEmpty()
-							&& null != sendMsg  && sendMsg.isEmpty()){
-						sendMsg=JsonSendModel.formateTcpSendMsg(mAction, sendMsg);				
+					sendMsg = (String) msg.obj;
+					if (null != mAction && !mAction.isEmpty()
+							&& null != sendMsg && sendMsg.isEmpty()) {
+						sendMsg = JsonPackage.formateTcpSendMsg(mAction,
+								sendMsg);
 						TCPClient tcpClient = TCPClient.instance();
 						String result = tcpClient.sendMessage(sendMsg);
-						if(null != mParentHandler){
+						if (null != mParentHandler) {
 							Message respondMsg = mParentHandler.obtainMessage();
 							respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
 							respondMsg.obj = JsonResolve.getTcpReponse(result);
@@ -165,16 +170,17 @@ public class P2PService {
 
 	}
 
-	
-	
-	private String matchAction(int actionInt){
-		String action="";
-		if(ServiceConfig.TCPS_ACTION_STBINFOR_CODE == actionInt)action=ServiceConfig.TCPS_ACTION_STBINFOR;
-		else if(ServiceConfig.TCPS_ACTION_DOWNLOADCONF_CODE == actionInt)action=ServiceConfig.TCPS_ACTION_DOWNLOADCONF;
-		else if(ServiceConfig.TCPS_ACTION_STBINFOR_CODE == actionInt)action=ServiceConfig.TCPS_ACTION_STBINFOR;
+	private String matchAction(int actionInt) {
+		String action = "";
+		if (ServiceConfig.TCPS_ACTION_STBINFOR_CODE == actionInt)
+			action = ServiceConfig.TCPS_ACTION_STBINFOR;
+		else if (ServiceConfig.TCPS_ACTION_DOWNLOADCONF_CODE == actionInt)
+			action = ServiceConfig.TCPS_ACTION_DOWNLOADCONF;
+		else if (ServiceConfig.TCPS_ACTION_STBINFOR_CODE == actionInt)
+			action = ServiceConfig.TCPS_ACTION_STBINFOR;
 		return action;
 	}
-	
+
 	/**
 	 * 特殊字符还原
 	 * 
@@ -190,6 +196,27 @@ public class P2PService {
 					.replace("%3F", "?").replace("%5E", "^");
 		}
 		return url;
+	}
+
+	public static String getLocalIpAddress() {
+
+		try {
+			for (Enumeration<NetworkInterface> en = NetworkInterface
+					.getNetworkInterfaces();
+			en.hasMoreElements();) {
+
+				NetworkInterface intf = en.nextElement();
+
+				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses();	enumIpAddr.hasMoreElements();) {
+					InetAddress inetAddress = enumIpAddr.nextElement();
+					if (!inetAddress.isLoopbackAddress()) {
+						return inetAddress.getHostAddress().toString();
+					}
+				}
+			}
+		} catch (SocketException ex) {
+		}
+		return "127.0.0.1";
 	}
 
 }

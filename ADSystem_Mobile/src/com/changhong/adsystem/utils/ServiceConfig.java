@@ -5,7 +5,7 @@ public class ServiceConfig {
 	
 
     public static String P2P_SERVER_IP = "192.168.1.100";
-    public static int P2P_SERVER_PORT = 20147;
+    public static final int P2P_SERVER_PORT = 20147;
 	public static String MAC="12:12:5D:13:B5:1F";
 
 	//执行结果定义

@@ -19,6 +19,7 @@ import com.changhong.adsystem.http.image.loader.core.ImageLoadController;
 import com.changhong.adsystem.model.AdStrategyPattern;
 import com.changhong.adsystem.model.Class_Constant;
 import com.changhong.adsystem.model.DeviceInfor;
+import com.changhong.adsystem.model.JsonPackage;
 import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.p2p.P2PService;
 import com.changhong.adsystem.utils.AesUtils;
@@ -181,12 +182,12 @@ public class StrategyPatternFragment extends BaseFragment {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_commit:// 上传数据
-//			String spJson=JsonResolve.formateAdSPJson();
-//			if(null != spJson){
-//				P2PService.creatP2PService().communicationWithBox(uiHander, ServiceConfig.ACTION_P2P_TCPSOCKET, spJson);
-//			}else{
-//				showToast(R.string.ad_sp_nojson);
-//			}
+			String conf=JsonPackage.getDownLoadConf();
+			if(null != conf){
+				mP2PService.communicationWithBox(uiHander, ServiceConfig.TCPS_ACTION_DOWNLOADCONF_CODE, conf);
+			}else{
+				showToast(R.string.ad_sp_nojson);
+			}
 			break;
 		case R.id.btn_update://下载广告资源文件	
 			downLoadADRes();
@@ -199,16 +200,7 @@ public class StrategyPatternFragment extends BaseFragment {
 		}
 	}
 	
-	
-	private void testJson(){
-		FileUtil mFileUtil=new FileUtil();
-		String spjson=mFileUtil.readFileFromSDCard(Configure.adBaseFilePath);
-		spjson=spjson.replace(" ", "");
-		uiHander.sendMessage(uiHander.obtainMessage(Class_Constant.REQUEST_STRATEPATTERN, spjson));
-	}
 
-	
-	
 	
 	/****************************************************重写系统方法********************************************/
 	
