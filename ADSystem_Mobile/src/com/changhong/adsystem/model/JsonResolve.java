@@ -185,6 +185,29 @@ public class JsonResolve {
 
 	}
 	
+	
+	
+	/**
+	 * 获取通信返回的内容
+	 * @param response
+	 * @return
+	 */
+	public static String getTcpAction(String response) {
+		String action = "";
+		try {
+			JSONObject json = new JSONObject(response);
+			if(null != json){
+				action=getJsonObjectString(json,ServiceConfig.TCP_SOCKET_ACTION);
+				
+			}
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return action;
+
+	}
+	
 	public static DeviceInfor resolveDeviceInfo(String result){
 		DeviceInfor device=new DeviceInfor();
 		JSONObject obj=null;

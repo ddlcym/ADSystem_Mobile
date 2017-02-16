@@ -1,28 +1,21 @@
 package com.changhong.adsystem.p2p;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.SocketException;
 import java.util.Enumeration;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
-import com.changhong.adsystem.model.JsonResolve;
-import com.changhong.adsystem.model.JsonPackage;
-import com.changhong.adsystem.utils.ServiceConfig;
-
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
+import com.changhong.adsystem.model.JsonPackage;
+import com.changhong.adsystem.model.JsonResolve;
+import com.changhong.adsystem.utils.ServiceConfig;
 
 public class P2PService {
 
@@ -31,7 +24,7 @@ public class P2PService {
 	private ServerSocket mServerSocket;
 	private Handler mParentHandler;
 	private Handler mMsgHandler;
-
+	private TCPClient mTCPClient=null;
 	// socketServer接收服务器：
 	private Thread mSocketCommunication = null;
 
@@ -50,12 +43,15 @@ public class P2PService {
 	 * 初始化全局变量，启动那个服务器
 	 */
 	private void initP2PService() {
+		
+		mTCPClient=TCPClient.instance();
 		// 启动接收线程:
 		clientCommunicationThread commThread = new clientCommunicationThread();
 		mSocketCommunication = new Thread(commThread);
-		mSocketCommunication.start();
+		mSocketCommunication.start();		
 
 	}
+	
 
 	/**
 	 * 接收端返回的信息
@@ -103,18 +99,10 @@ public class P2PService {
 					String sendMsg = null;
 					mAction = matchAction(msg.arg1);
 					sendMsg = (String) msg.obj;
-					if (null != mAction && !mAction.isEmpty()
-							&& null != sendMsg && sendMsg.isEmpty()) {
-						sendMsg = JsonPackage.formateTcpSendMsg(mAction,
-								sendMsg);
-						TCPClient tcpClient = TCPClient.instance();
-						String result = tcpClient.sendMessage(sendMsg);
-						if (null != mParentHandler) {
-							Message respondMsg = mParentHandler.obtainMessage();
-							respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
-							respondMsg.obj = JsonResolve.getTcpReponse(result);
-							mParentHandler.sendMessage(respondMsg);
-						}
+					if (null != mAction && !mAction.isEmpty() && null != sendMsg && sendMsg.isEmpty()) {
+						sendMsg = JsonPackage.formateTcpSendMsg(mAction,sendMsg);
+						mTCPClient.tcpConnect();
+						mTCPClient.sendMessage(mParentHandler,mAction,sendMsg);						
 					}
 				}
 			};
@@ -202,12 +190,12 @@ public class P2PService {
 
 		try {
 			for (Enumeration<NetworkInterface> en = NetworkInterface
-					.getNetworkInterfaces();
-			en.hasMoreElements();) {
+					.getNetworkInterfaces(); en.hasMoreElements();) {
 
 				NetworkInterface intf = en.nextElement();
 
-				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses();	enumIpAddr.hasMoreElements();) {
+				for (Enumeration<InetAddress> enumIpAddr = intf
+						.getInetAddresses(); enumIpAddr.hasMoreElements();) {
 					InetAddress inetAddress = enumIpAddr.nextElement();
 					if (!inetAddress.isLoopbackAddress()) {
 						return inetAddress.getHostAddress().toString();

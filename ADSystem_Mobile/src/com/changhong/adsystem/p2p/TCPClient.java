@@ -15,8 +15,17 @@ import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.http.conn.util.InetAddressUtils;
+
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
+
+import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.utils.ServiceConfig;
 
 public class TCPClient {
@@ -29,7 +38,9 @@ public class TCPClient {
 	boolean isReqMedia = false;
 	PrintWriter mOutput = null;
 	BufferedReader mInput = null;
-
+	Socket mSocket = new Socket();
+	Map<String, Handler> mActionList = new HashMap<String, Handler>();
+	SocketAddress oldSocketAddress=null;
 	public static synchronized TCPClient instance() {
 		if (mTCPClient == null) {
 			mTCPClient = new TCPClient();
@@ -37,93 +48,108 @@ public class TCPClient {
 		return mTCPClient;
 	}
 
-	
-
-	/**
-	 * 发送数据
-	 * 
-	 * @param String 发送信息正文
-	 * @return
-	 */
-	public String sendMessage(String sendMsg) {
-		String str = "";
-		Socket socket = null;
-		PrintWriter out = null;
-		Log.i(TAG, "---->sendMsg is " + sendMsg);
-
+	public boolean tcpConnect() {
+		boolean isOk = false;
 		try {
-			socket = new Socket();
-			SocketAddress socketAddress=UDPData.getInstance().getServerAddress();
-			socket.connect(socketAddress, 10000);
-			if (socket.isConnected()) { // 未能得到指定的Socket对象,Socket通讯为空				
-				//向机顶盒发送信息
-				out = new PrintWriter(socket.getOutputStream());
-				out.println(sendMsg);
-				out.flush();
-				//从机顶盒获取返回消息
-				str = receiveRespond(socket);
-				Log.i(TAG, "socket communication is success! ");
-			}
-		} catch (UnknownHostException e) {
-			Log.e(TAG, "---->出现未知主机错误! 主机信息=" + ServiceConfig.P2P_SERVER_IP + " 端口号="
-					+ ServiceConfig.P2P_SERVER_PORT + " 出错信息=" + e.getMessage());
-			str = "2191";
-		} catch (IOException e) {
-			Log.e(TAG, "---->出现IO异常! 主机信息=" + ServiceConfig.P2P_SERVER_IP + " 端口号="
-					+ ServiceConfig.P2P_SERVER_PORT + " 出错信息=" + e.getMessage());
-			str = "2191";
-		} catch (Exception e) {
-			str = "2177";
-			Log.e(TAG, "---->出现未知异常" + e.getMessage());
-		} finally {
-			try {
-				if (null != out) {
-					out.close();
-					out = null;
-				}
-				if (null != socket) {
-					socket.close();
-					socket = null;
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		Log.i(TAG, "--->返回的socket通讯字符串=" + str);
-		return str.trim();
-	}
+			SocketAddress socketAddress = UDPData.getInstance().getServerAddress();
+			if(null != oldSocketAddress && !oldSocketAddress.equals(socketAddress)){
+				socketRelease();
+				mSocket.connect(socketAddress, 10000);
+				if (mSocket.isConnected()) {
+					mOutput = new PrintWriter(mSocket.getOutputStream());
+					mInput = new BufferedReader(new InputStreamReader(
+							mSocket.getInputStream()));
+					oldSocketAddress=socketAddress;
+					isOk = true;
 
-	private String receiveRespond(Socket socket) {
-		String revStr = "";
-		int delayTime = 30, len;
-		char buffer[] = new char[1024];
-		BufferedReader in = null;
-		try {
-			in = new BufferedReader(new InputStreamReader(
-					socket.getInputStream()));
-			while (delayTime-- > 0) {
-				if (socket.getInputStream().available() > 0) {
-					if ((len = in.read(buffer)) != -1) {
-						String temp = new String(buffer, 0, len);
-						revStr += temp;
-					}
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		return isOk;
+	}
+
+	/**
+	 * 发送数据
+	 * 
+	 * @param String
+	 *            发送信息正文
+	 * @return
+	 */
+	public void sendMessage(Handler handler, String action, String sendMsg) {
+		if (null != mOutput) {
+			mOutput.println(sendMsg);
+			mOutput.flush();
+			mActionList.put(action, handler);
+		}
+	}
+
+	public void socketRelease() {
+
+		try {
+			if (null != mOutput) {
+				mOutput.close();
+				mOutput = null;
+			}
+			if (null != mInput) {
+				mInput.close();
+				mInput = null;
+			}
+			if (null != mSocket) {
+				mSocket.close();
+				mSocket = null;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String receiveRespond() {
+
+		String revStr = "";
+		int len;
+		char buffer[] = new char[1024];
+
+		while (true) {
 			try {
-				if (null != in) {
-					in.close();
-					in = null;
+				while ((len = mInput.read(buffer)) != -1) {
+					String temp = new String(buffer, 0, len);
+					revStr += temp;
+				}
+				String action = getTcpAction(revStr);
+				Handler mParentHandler = matchHandler(action);
+				if (null != mParentHandler) {
+					Message respondMsg = mParentHandler.obtainMessage();
+					respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
+					respondMsg.obj = JsonResolve.getTcpReponse(revStr);
+					mParentHandler.sendMessage(respondMsg);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+	}
 
-		return revStr;
+	/**
+	 * 获取通讯的action
+	 * 
+	 * @param msg
+	 * @return
+	 */
+	private String getTcpAction(String msg) {
+		return JsonResolve.getTcpAction(msg);
+	}
+
+	private Handler matchHandler(String action) {
+
+		for (Map.Entry<String, Handler> entry : mActionList.entrySet()) {
+			String key = entry.getKey().toString();
+			if (action.equals(key)) {
+				return (Handler) entry.getValue();
+			}
+		}
+		return null;
 	}
 
 	/**

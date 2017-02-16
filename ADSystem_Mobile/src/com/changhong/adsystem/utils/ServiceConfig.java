@@ -35,8 +35,11 @@ public class ServiceConfig {
   	public final static String  TCP_SOCKET_REQUEST= "request";
   	public final static String  TCP_SOCKET_RESPOND= "response";
   	
+  	
   	public final static String  TCPS_ACTION_STBINFOR= "getSTBInfo";
   	public final static String  TCPS_ACTION_DOWNLOADCONF= "pushDownloadConf";
+  	public final static String  TCPS_SERVER_FILEDOWNLOAD= "fileDownloadPro";
+
   	
   	public final static int  TCPS_ACTION_STBINFOR_CODE= 3001;
   	public final static int  TCPS_ACTION_DOWNLOADCONF_CODE= 3002;
