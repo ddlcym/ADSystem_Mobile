@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.changhong.adsystem.model.DeviceInfor;
 import com.changhong.adsystem.model.JsonPackage;
 import com.changhong.adsystem.model.JsonResolve;
+import com.changhong.adsystem.p2p.P2PService;
 import com.changhong.adsystem.p2p.TCPClient;
 import com.changhong.adsystem.p2p.UDPQuerySingleThread;
 import com.changhong.adsystem.utils.Configure;
@@ -107,12 +108,8 @@ public class DeviceManagerF extends BaseFragment {
 	
 	
 	private void queryDeviceInfo(){
-		TCPClient tcpClient = TCPClient.instance();
-		String result = tcpClient.sendMessage(JsonPackage.queryDeviceInfoParams());
-		Message respondMsg = handler.obtainMessage();
-		respondMsg.what = Configure.TCP_DEVICES_INFO;
-		respondMsg.obj = result;
-		handler.sendMessage(respondMsg);
+		String sendMsg=JsonPackage.queryDeviceInfoParams();
+		P2PService.creatP2PService().communicationWithBox(handler, Configure.TCP_DEVICES_INFO, sendMsg);
 	}
 	
 	
