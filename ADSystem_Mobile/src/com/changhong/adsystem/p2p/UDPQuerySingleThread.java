@@ -37,7 +37,7 @@ public class UDPQuerySingleThread extends Thread {
 	private int localPort;
 	private SocketAddress remoteAddress = null;
 	private DatagramChannel channel = null;
-	public boolean flag = false;
+	public boolean flag = true;
 	private final boolean blockingMode = false;
 	private final int bufferSize = 1024;
 	byte[] sendCache;
@@ -66,6 +66,7 @@ public class UDPQuerySingleThread extends Thread {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		Log.i("mmmm", "UDPQUERY-start");
 		try {
 			DatagramSocket ds = new DatagramSocket();
 			localPort = ds.getLocalPort();
@@ -112,10 +113,11 @@ public class UDPQuerySingleThread extends Thread {
 					cache = new byte[receiveBuffer.limit()];
 					receiveBuffer.get(cache);
 					receiveBuffer.clear();
-//					Log.i("mmmm","receive-udp");
+					
 					// 增加cache的处理方法
 					try {
-						String result=getHexString(cache);
+						String result=new String(cache);
+						Log.i("mmmm","receive-udp result:"+result+"serverAddress:"+((InetSocketAddress)serverAddress).getAddress().getHostAddress());
 						if(result.contains("_serviceRespond")){
 							UDPData.getInstance().setServerAddress(serverAddress);//保存服务器IP
 							dealCache(result);
