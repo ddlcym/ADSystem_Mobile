@@ -209,6 +209,13 @@ public class UDPQuerySingleThread extends Thread {
 
 	private void dealCache(String result) {
 		UDPData.getInstance().setUDPQueryResult(result);
+		if(result!=null){
+			String data[]=result.split("_");
+			if(data.length>2){
+				int TCPServerPort= Integer.parseInt(data[2]);
+				UDPData.getInstance().setServerPort(TCPServerPort);
+			}
+		}
 		state = State.END;
 	}
 	
