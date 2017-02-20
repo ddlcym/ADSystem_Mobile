@@ -22,4 +22,11 @@
     <!-- 提示信息 -->
     <string name="ad_sp_nojson">获取广告策略失败！</string>
     
+    
+    
+    <!-- 通讯信息定义 -->
+    <string name="tcpserver_response_success">"success"</string>
+    <string name="tcpserver_response_failed">"failed"</string>
+    
+    
 </resources>
