@@ -62,7 +62,7 @@ public class P2PService {
 	 * 创建TCp连接
 	 */
 	public void creatTcpConnect(){
-		mTCPClient.tcpConnect();
+		mMsgHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);
 	}
 	
 
@@ -123,14 +123,18 @@ public class P2PService {
 							sendMsg=sendMsg.replace("\\","").replace(" ", "");
 							mTCPClient.sendMessage(mParentHandler,mAction,JsonPackage.sendMsgToByte(sendMsg));						
 						}
-						sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_BEATS,20*1000);
 						break;
 					case ServiceConfig.TCP_SOCKET_TYPE_BEATS:
 						
 						mTCPClient.sendMessage(null,ServiceConfig.TCP_SOCKET_BEATS,ServiceConfig.TCP_SOCKET_BEATS.getBytes());						
-				
+
 						break;
-					}					
+                   case ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT:						
+               		    mTCPClient.tcpConnect();
+						break;
+					}
+					sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_BEATS,20*1000);
+
 				}
 			};
 	

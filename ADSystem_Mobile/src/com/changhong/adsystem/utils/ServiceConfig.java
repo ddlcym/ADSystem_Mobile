@@ -50,6 +50,7 @@ public class ServiceConfig {
   	
 	public final static int  TCP_SOCKET_TYPE_REQUESR= 4001;
   	public final static int  TCP_SOCKET_TYPE_BEATS= 4002;
-  	
+  	public final static int  TCP_SOCKET_TYPE_CREATECONNECT= 4003;
+
   
 }

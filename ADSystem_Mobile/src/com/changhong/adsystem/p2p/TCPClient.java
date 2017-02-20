@@ -83,6 +83,7 @@ public class TCPClient {
 		OutputStream mOutput=null;
 		try {
 			if (null != mSocket) {	
+				Log.i(TAG, ">>>>>> socket send msg");
 				mOutput = mSocket.getOutputStream();
 				mOutput.write(sendBuff);			
 				mOutput.flush();
@@ -91,14 +92,14 @@ public class TCPClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally{
-			try {
-				if(null != mOutput){
-					mOutput.close();
-					mOutput=null;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				if(null != mOutput){
+//					mOutput.close();
+//					mOutput=null;
+//				}
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
 		}
 	}
 
@@ -172,6 +173,8 @@ public class TCPClient {
 				int len = -1;
 				try {
 					revStr = "";
+					Log.i(TAG, ">>>>>> start to read  buffer！！！！");
+
 					mInput = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
 					while ((len = mInput.read(buffer)) != -1) {
 						revStr +=  new String(buffer, 0, len);;
@@ -196,10 +199,10 @@ public class TCPClient {
 					e1.printStackTrace();
 				}finally{
 					try {
-						if (null != mInput) {
-							mInput.close();
-							mInput = null;
-						}
+//						if (null != mInput) {
+//							mInput.close();
+//							mInput = null;
+//						}
 						Thread.sleep(1000);
 					} catch (Exception e) {
 						e.printStackTrace();
