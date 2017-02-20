@@ -1,6 +1,9 @@
 package com.changhong.adsystem.p2p;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+
+import com.changhong.adsystem.utils.ServiceConfig;
 
 /** 
  * @author  cym  
@@ -43,7 +46,13 @@ public class UDPData {
 	}
 
 	public void setServerPort(int serverPort) {
-		this.serverPort = serverPort;
+		ServiceConfig.P2P_SERVER_PORT=this.serverPort = serverPort;
+	}
+	
+	
+	public String getServerIP() {
+		InetSocketAddress socketAddress = (InetSocketAddress) serverAddress;
+		return socketAddress.getAddress().getHostAddress();
 	}
 	
 	

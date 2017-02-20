@@ -5,7 +5,7 @@ public class ServiceConfig {
 	
 
     public static String P2P_SERVER_IP = "192.168.1.100";
-    public static final int P2P_SERVER_PORT = 20147;
+    public static  int P2P_SERVER_PORT = 20147;
 	public static String MAC="12:12:5D:13:B5:1F";
 
 	//执行结果定义
@@ -34,7 +34,8 @@ public class ServiceConfig {
   	public final static String  TCP_SOCKET_ACTION= "action";
   	public final static String  TCP_SOCKET_REQUEST= "request";
   	public final static String  TCP_SOCKET_RESPOND= "response";
-  	
+  	public final static String  TCP_SOCKET_BEATS= "_hb";
+
   	
   	public final static String  TCPS_ACTION_STBINFOR= "getSTBInfo";
   	public final static String  TCPS_ACTION_DOWNLOADCONF= "pushDownloadConf";
@@ -43,6 +44,12 @@ public class ServiceConfig {
   	
   	public final static int  TCPS_ACTION_STBINFOR_CODE= 3001;
   	public final static int  TCPS_ACTION_DOWNLOADCONF_CODE= 3002;
-
   	
+  	
+  	/***************************************************TCP 通讯类型定义****************************************************************/
+  	
+	public final static int  TCP_SOCKET_TYPE_REQUESR= 4001;
+  	public final static int  TCP_SOCKET_TYPE_BEATS= 4002;
+  	
+  
 }

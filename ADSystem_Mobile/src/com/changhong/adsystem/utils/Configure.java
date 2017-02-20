@@ -11,7 +11,7 @@ public class Configure {
 	public static String rootPath=Environment.getExternalStorageDirectory().getAbsolutePath();
 
 	public static String adBaseFileSuffix="adSystem/baseFile/spJson.json";
-	public static String adResPrefix="adSystem/res";
+	public static String adResPrefix="adSystem/res/";
 	public static String adBaseFilePath=rootPath+File.separator+adBaseFileSuffix;
 	public static String adResFilePath=rootPath+File.separator+adResPrefix;
 	/***************************************************文件定义************************************************************/

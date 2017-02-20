@@ -1,7 +1,10 @@
 package com.changhong.adsystem.activity;
 
+import java.io.Serializable;
 import java.util.List;
 import org.json.JSONObject;
+
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
@@ -68,12 +71,15 @@ public class CommunityFragment extends BaseFragment {
 						return;
 					}
 					// 进入广告策略页面
-					FragmentTransaction transaction = getFragmentManager()
-							.beginTransaction();
-					transaction.replace(R.id.contentLayout,
-							new StrategyPatternFragment(devList));
-					transaction.addToBackStack(null);
-					transaction.commit();
+//					FragmentTransaction transaction = getFragmentManager()
+//							.beginTransaction();
+//					transaction.replace(R.id.contentLayout,
+//							new StrategyPatternFragment(devList));
+//					transaction.addToBackStack(null);
+//					transaction.commit();
+					Intent intent=new Intent(getActivity(),StrategyPatternActivity.class);
+					intent.putExtra("deviceInfors", (Serializable)devList);
+					startActivity(intent);
 				}
 
 			}

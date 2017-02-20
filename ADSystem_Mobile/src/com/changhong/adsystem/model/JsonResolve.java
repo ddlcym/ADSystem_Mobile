@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.util.Log;
 
+import com.changhong.adsystem.p2p.DataUtil;
 import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem.utils.FileUtil;
 import com.changhong.adsystem.utils.ServiceConfig;
@@ -288,5 +289,12 @@ public class JsonResolve {
 			e.printStackTrace();
 		}
 		return jsonObj;
+	}
+	
+	
+	public static String filterJsonMsg(String str) {
+		int offset=4*3;
+		byte[] jsonByte=str.getBytes();
+		return new DataUtil().byteToString(jsonByte, offset,false,jsonByte.length-offset);
 	}
 }

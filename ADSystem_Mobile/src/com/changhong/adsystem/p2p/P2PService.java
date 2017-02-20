@@ -10,9 +10,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+
+import com.changhong.adsystem.activity.MyApp;
 import com.changhong.adsystem.model.JsonPackage;
 import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.utils.ServiceConfig;
@@ -52,6 +58,13 @@ public class P2PService {
 
 	}
 	
+	/**
+	 * 创建TCp连接
+	 */
+	public void creatTcpConnect(){
+		mTCPClient.tcpConnect();
+	}
+	
 
 	/**
 	 * 接收端返回的信息
@@ -63,7 +76,9 @@ public class P2PService {
 		mParentHandler = handler;
 		// 发送消息给子线程
 		if (null != mMsgHandler) {
+			mMsgHandler.removeMessages(ServiceConfig.TCP_SOCKET_TYPE_BEATS);
 			Message sendMsg = mMsgHandler.obtainMessage();
+			sendMsg.what=ServiceConfig.TCP_SOCKET_TYPE_REQUESR;
 			sendMsg.arg1 = action;
 			sendMsg.obj = msg;
 			mMsgHandler.sendMessage(sendMsg);
@@ -96,22 +111,29 @@ public class P2PService {
 
 			mMsgHandler = new Handler() {
 				public void handleMessage(Message msg) {
-					String sendMsg = null;
-					mAction = matchAction(msg.arg1);
-					sendMsg = (String) msg.obj;
-					if (null != mAction && !mAction.isEmpty() && null != sendMsg && sendMsg.isEmpty()) {
-						sendMsg = JsonPackage.formateTcpSendMsg(mAction,sendMsg);
-						mTCPClient.tcpConnect();
-						mTCPClient.sendMessage(mParentHandler,mAction,sendMsg);						
-					}
+					
+					switch(msg.what){
+					case ServiceConfig.TCP_SOCKET_TYPE_REQUESR:
+					
+						String sendMsg = null;
+						mAction = matchAction(msg.arg1);
+						sendMsg = (String) msg.obj;
+						if (null != mAction && !mAction.isEmpty() && null != sendMsg && !sendMsg.isEmpty()) {
+							sendMsg = JsonPackage.formateTcpSendMsg(mAction,sendMsg);
+							sendMsg=sendMsg.replace("\\","").replace(" ", "");
+							mTCPClient.sendMessage(mParentHandler,mAction,JsonPackage.sendMsgToByte(sendMsg));						
+						}
+						sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_BEATS,20*1000);
+						break;
+					case ServiceConfig.TCP_SOCKET_TYPE_BEATS:
+						
+						mTCPClient.sendMessage(null,ServiceConfig.TCP_SOCKET_BEATS,ServiceConfig.TCP_SOCKET_BEATS.getBytes());						
+				
+						break;
+					}					
 				}
 			};
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO 自动生成的 catch 块
-				e.printStackTrace();
-			}
+	
 			Looper.loop();
 		}
 
@@ -166,6 +188,8 @@ public class P2PService {
 			action = ServiceConfig.TCPS_ACTION_DOWNLOADCONF;
 		else if (ServiceConfig.TCPS_ACTION_STBINFOR_CODE == actionInt)
 			action = ServiceConfig.TCPS_ACTION_STBINFOR;
+		else 
+			action =ServiceConfig.TCP_SOCKET_BEATS;
 		return action;
 	}
 
@@ -206,5 +230,24 @@ public class P2PService {
 		}
 		return "127.0.0.1";
 	}
+	
+	
+	public static String getIp(){
+	     WifiManager wm=(WifiManager)MyApp.getContext().getSystemService(Context.WIFI_SERVICE);
+	     //检查Wifi状态  
+	     if(!wm.isWifiEnabled())wm.setWifiEnabled(true);
+	     WifiInfo wi=wm.getConnectionInfo();
+	     //获取32位整型IP地址  
+	     int ipAdd=wi.getIpAddress();
+	     //把整型地址转换成“*.*.*.*”地址  
+	     String ip=intToIp(ipAdd);
+	     return ip;
+	 }
+	 private static String intToIp(int i) {
+	     return (i & 0xFF ) + "." +
+	     ((i >> 8 ) & 0xFF) + "." +
+	     ((i >> 16 ) & 0xFF) + "." +
+	     ( i >> 24 & 0xFF) ;
+	 } 
 
 }
