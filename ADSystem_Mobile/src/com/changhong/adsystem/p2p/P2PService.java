@@ -132,6 +132,7 @@ public class P2PService {
                    case ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT:						
                		    mTCPClient.tcpConnect();
 						break;
+					
 					}
 					sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_BEATS,20*1000);
 

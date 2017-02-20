@@ -56,7 +56,8 @@ public class TCPClient {
 			if (null == oldSocketAddress
 					|| !oldSocketAddress.equals(curServerIP)) {
 				socketRelease();
-				Log.i(TAG,"-------------------p2p connect-------------------------");
+				Log.i(TAG,
+						"-------------------p2p connect-------------------------");
 				mSocket = new Socket(curServerIP, ServiceConfig.P2P_SERVER_PORT);
 				if (mSocket.isConnected()) {
 					oldSocketAddress = curServerIP;
@@ -80,26 +81,26 @@ public class TCPClient {
 	 * @return
 	 */
 	public void sendMessage(Handler handler, String action, byte[] sendBuff) {
-		OutputStream mOutput=null;
+		OutputStream mOutput = null;
 		try {
-			if (null != mSocket) {	
+			if (null != mSocket) {
 				Log.i(TAG, ">>>>>> socket send msg");
 				mOutput = mSocket.getOutputStream();
-				mOutput.write(sendBuff);			
+				mOutput.write(sendBuff);
 				mOutput.flush();
 				mActionList.put(action, handler);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}finally{
-//			try {
-//				if(null != mOutput){
-//					mOutput.close();
-//					mOutput=null;
-//				}
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
+		} finally {
+			try {
+				if (null != mOutput) {
+					mOutput.close();
+					mOutput = null;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -140,6 +141,54 @@ public class TCPClient {
 		return null;
 	}
 
+	public void ReceiveTask() {
+
+		String revStr = "";
+		char buffer[] = new char[1024];
+		BufferedReader mInput = null;
+
+		int len = -1;
+		try {
+			revStr = "";
+			Log.i(TAG, ">>>>>> start to read  buffer！！！！");
+
+			mInput = new BufferedReader(new InputStreamReader(
+					mSocket.getInputStream()));
+			while ((len = mInput.read(buffer)) != -1) {
+				revStr += new String(buffer, 0, len);
+				;
+			}
+
+			if (!revStr.isEmpty()) {
+				revStr = JsonResolve.filterJsonMsg(revStr);
+				if (!ServiceConfig.TCP_SOCKET_BEATS.equals(revStr)) {
+
+					String action = getTcpAction(revStr);
+					Handler mParentHandler = matchHandler(action);
+					if (null != mParentHandler) {
+						Message respondMsg = mParentHandler.obtainMessage();
+						respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
+						respondMsg.obj = JsonResolve.getTcpReponse(revStr);
+						mParentHandler.sendMessage(respondMsg);
+					}
+				}
+			}
+
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} finally {
+			try {
+				if (null != mInput) {
+					mInput.close();
+					mInput = null;
+				}
+				Thread.sleep(1000);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	/********************************************************************************************/
 	class ReceiveThread implements Runnable {
 
@@ -168,47 +217,51 @@ public class TCPClient {
 		public void run() {
 			String revStr = "";
 			char buffer[] = new char[1024];
-			BufferedReader mInput=null;
+			BufferedReader mInput = null;
 			while (isRunning()) {
 				int len = -1;
 				try {
 					revStr = "";
 					Log.i(TAG, ">>>>>> start to read  buffer！！！！");
 
-					mInput = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+					mInput = new BufferedReader(new InputStreamReader(
+							mSocket.getInputStream()));
 					while ((len = mInput.read(buffer)) != -1) {
-						revStr +=  new String(buffer, 0, len);;
+						revStr += new String(buffer, 0, len);
+						;
 					}
-					
+
 					if (!revStr.isEmpty()) {
-						revStr=JsonResolve.filterJsonMsg(revStr);
-						if(!ServiceConfig.TCP_SOCKET_BEATS.equals(revStr)){
-						
+						revStr = JsonResolve.filterJsonMsg(revStr);
+						if (!ServiceConfig.TCP_SOCKET_BEATS.equals(revStr)) {
+
 							String action = getTcpAction(revStr);
 							Handler mParentHandler = matchHandler(action);
 							if (null != mParentHandler) {
-								Message respondMsg = mParentHandler.obtainMessage();
+								Message respondMsg = mParentHandler
+										.obtainMessage();
 								respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
-								respondMsg.obj = JsonResolve.getTcpReponse(revStr);
+								respondMsg.obj = JsonResolve
+										.getTcpReponse(revStr);
 								mParentHandler.sendMessage(respondMsg);
 							}
 						}
 					}
-										
+
 				} catch (IOException e1) {
 					e1.printStackTrace();
-				}finally{
+				} finally {
 					try {
-//						if (null != mInput) {
-//							mInput.close();
-//							mInput = null;
-//						}
+						if (null != mInput) {
+							mInput.close();
+							mInput = null;
+						}
 						Thread.sleep(1000);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
-			}		
+			}
 		}
 
 	}
