@@ -153,7 +153,7 @@ public class P2PService {
 		
 		private void sendTcpMsg(Handler handler, String action, byte[] sendBuff){
 			if(null == mTCPClient || null == sendBuff)return;
-		    mTCPClient.sendMessage(handler,ServiceConfig.TCP_SOCKET_BEATS,JsonPackage.sendMsgToByte(ServiceConfig.TCP_SOCKET_BEATS));						
+		    mTCPClient.sendMessage(handler,action,sendBuff);						
 
 		}
 
