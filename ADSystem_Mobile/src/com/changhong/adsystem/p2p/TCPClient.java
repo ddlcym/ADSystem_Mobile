@@ -104,7 +104,7 @@ public class TCPClient {
 	 */
 	public void sendMessage(Handler handler, String action, byte[] sendBuff) {
 		try {
-			if (null != sendBuff && null != dataOutputStream) {
+			if (null != dataOutputStream) {
 				Log.i(TAG, ">>>>>> socket send msg");
 				dataOutputStream.write(sendBuff);
 				dataOutputStream.flush();
