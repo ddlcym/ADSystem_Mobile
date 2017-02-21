@@ -21,6 +21,7 @@
     
     <!-- 提示信息 -->
     <string name="ad_sp_nojson">获取广告策略失败！</string>
+    <string name="ad_res_download_finished">资源文件下载完毕！</string>
     
     
     
