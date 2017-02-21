@@ -122,15 +122,16 @@ public class P2PService {
 						}
 						break;
 					case ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS:						
-						sendTcpMsg(this,ServiceConfig.TCP_SOCKET_BEATS,JsonPackage.sendMsgToByte(ServiceConfig.TCP_SOCKET_BEATS));						
+						sendTcpMsg(this,ServiceConfig.TCPS_ACTION_BEATS,JsonPackage.sendMsgToByte(ServiceConfig.TCPS_ACTION_BEATS));						
 						break;
                    case ServiceConfig.TCP_SOCKET_TYPE_RESPOND:	
                 	    String action=(String) msg.obj;
                 	    if(action.equals(ServiceConfig.TCPS_SERVER_FILEDOWNLOAD_FINISHED)){
                 	    	Toast.makeText(MyApp.getContext(), R.string.ad_res_download_finished, Toast.LENGTH_SHORT).show();
-                	    }else if(action.contains(ServiceConfig.TCP_SOCKET_BEATS)){
+                	    }else if(action.contains(ServiceConfig.TCPS_ACTION_BEATS)){
                 	    	beatsCount=ServiceConfig.SOCKET_MAX_WATING_TIME;
                 	    }
+          		    	isSendBeats=false;
 						break;		
                    case ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT:
               		    if(null != mTCPClient && !mTCPClient.tcpConnect(this)){
@@ -209,7 +210,7 @@ public class P2PService {
 		else if (ServiceConfig.TCPS_ACTION_STBINFOR_CODE == actionInt)
 			action = ServiceConfig.TCPS_ACTION_STBINFOR;
 		else 
-			action =ServiceConfig.TCP_SOCKET_BEATS;
+			action =ServiceConfig.TCPS_ACTION_BEATS;
 		return action;
 	}
 

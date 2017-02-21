@@ -158,7 +158,11 @@ public class TCPClient {
 	 * @return
 	 */
 	private String getTcpAction(String msg) {
-		return JsonResolve.getTcpAction(msg);
+		String action=JsonResolve.getTcpAction(msg);
+		if(action.isEmpty() && msg.contains(ServiceConfig.TCPS_ACTION_BEATS)){
+			action=ServiceConfig.TCPS_ACTION_BEATS;
+		}
+		return action;
 	}
 
 	private Handler matchHandler(String action) {
@@ -213,6 +217,20 @@ public class TCPClient {
            
 		}
 
+		private int getActionCode(String action) {
+			int actionInt = -1;
+			if (ServiceConfig.TCPS_ACTION_STBINFOR.equals(action))
+				actionInt = ServiceConfig.TCPS_ACTION_STBINFOR_CODE;
+			else if (ServiceConfig.TCPS_ACTION_DOWNLOADCONF.equals(action))
+				actionInt = ServiceConfig.TCPS_ACTION_DOWNLOADCONF_CODE;
+			else if (ServiceConfig.TCPS_SERVER_FILEDOWNLOAD.equals(action))
+				actionInt = ServiceConfig.TCPS_SERVER_FILEDOWNLOAD_CODE;
+			else if (ServiceConfig.TCPS_ACTION_BEATS.equals(action)) 
+				actionInt =ServiceConfig.TCPS_ACTION_BEATS_CODE;
+			return actionInt;
+		}
+		
+		
 		private int handleInputStream(DataInputStream dataInputStream)
 				throws IOException {
 			final int cacheSize = 512;
@@ -271,10 +289,11 @@ public class TCPClient {
 						Handler mParentHandler = matchHandler(action);
 						if (null != mParentHandler) {
 							Message respondMsg = mParentHandler.obtainMessage();
-							respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
+							respondMsg.what = getActionCode(action);
 							respondMsg.obj = JsonResolve.getTcpReponse(revStr);
 							respondMsg.sendToTarget();
-						}else{
+						}else if (null != deafultHandler){
+					
 							Message respondMsg = deafultHandler.obtainMessage();
 							respondMsg.what = ServiceConfig.TCP_SOCKET_TYPE_RESPOND;
 							respondMsg.obj = revStr;

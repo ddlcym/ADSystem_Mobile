@@ -200,8 +200,7 @@ public class JsonResolve {
 			if (null != response) {
 				JSONObject json = new JSONObject(response);
 				if (null != json) {
-					action = getJsonObjectString(json,
-							ServiceConfig.TCP_SOCKET_ACTION);
+					action = getJsonObjectString(json,ServiceConfig.TCP_SOCKET_ACTION);
 				}
 			}
 
