@@ -1,39 +1,37 @@
 package com.changhong.adsystem.p2p;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.ServerSocket;
 import java.net.SocketException;
 import java.util.Enumeration;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.widget.Toast;
 
 import com.changhong.adsystem.activity.MyApp;
 import com.changhong.adsystem.model.JsonPackage;
-import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.utils.ServiceConfig;
+import com.changhong.adsystem_mobile.R;
 
 public class P2PService {
 
 	private static final String Tag = "P2PService::";
 	private static P2PService intance;
-	private ServerSocket mServerSocket;
 	private Handler mParentHandler;
 	private Handler mMsgHandler;
 	private TCPClient mTCPClient=null;
 	// socketServer接收服务器：
 	private Thread mSocketCommunication = null;
-
+	private boolean isConnected=false;
+	
 	private P2PService() {
 		initP2PService();
 	}
@@ -50,7 +48,6 @@ public class P2PService {
 	 */
 	private void initP2PService() {
 		
-		mTCPClient=TCPClient.instance();
 		// 启动接收线程:
 		clientCommunicationThread commThread = new clientCommunicationThread();
 		mSocketCommunication = new Thread(commThread);
@@ -62,7 +59,10 @@ public class P2PService {
 	 * 创建TCp连接
 	 */
 	public void creatTcpConnect(){
-		mMsgHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);
+		mTCPClient=TCPClient.instance();
+		if(null != mMsgHandler){
+		   mMsgHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);
+		}
 	}
 	
 
@@ -76,7 +76,7 @@ public class P2PService {
 		mParentHandler = handler;
 		// 发送消息给子线程
 		if (null != mMsgHandler) {
-			mMsgHandler.removeMessages(ServiceConfig.TCP_SOCKET_TYPE_BEATS);
+			mMsgHandler.removeMessages(ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS);
 			Message sendMsg = mMsgHandler.obtainMessage();
 			sendMsg.what=ServiceConfig.TCP_SOCKET_TYPE_REQUESR;
 			sendMsg.arg1 = action;
@@ -85,18 +85,15 @@ public class P2PService {
 		}
 	}
 
-	public void close() {
-		try {
-			if (null != mServerSocket) {
-				mServerSocket.close();
-				mServerSocket = null;
-			}
-		} catch (IOException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+	public void close() {		
+		if (null != mTCPClient) {
+			mTCPClient.stopReceiveTask();
+			mTCPClient.tcpSocketClose();			
+			mTCPClient = null;
 		}
 	}
 
+	int beatsCount=ServiceConfig.SOCKET_MAX_WATING_TIME;
 	/********************************************************** clientCommunicationThread *******************************************************************/
 
 	private class clientCommunicationThread implements Runnable {
@@ -111,7 +108,7 @@ public class P2PService {
 
 			mMsgHandler = new Handler() {
 				public void handleMessage(Message msg) {
-					
+					boolean isSendBeats=true;
 					switch(msg.what){
 					case ServiceConfig.TCP_SOCKET_TYPE_REQUESR:
 					
@@ -121,25 +118,43 @@ public class P2PService {
 						if (null != mAction && !mAction.isEmpty() && null != sendMsg && !sendMsg.isEmpty()) {
 							sendMsg = JsonPackage.formateTcpSendMsg(mAction,sendMsg);
 							sendMsg=sendMsg.replace("\\","").replace(" ", "");
-							mTCPClient.sendMessage(mParentHandler,mAction,JsonPackage.sendMsgToByte(sendMsg));						
+							sendTcpMsg(mParentHandler,mAction,JsonPackage.sendMsgToByte(sendMsg));						
 						}
 						break;
-					case ServiceConfig.TCP_SOCKET_TYPE_BEATS:
-						
-						mTCPClient.sendMessage(null,ServiceConfig.TCP_SOCKET_BEATS,ServiceConfig.TCP_SOCKET_BEATS.getBytes());						
-
+					case ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS:						
+						sendTcpMsg(this,ServiceConfig.TCP_SOCKET_BEATS,JsonPackage.sendMsgToByte(ServiceConfig.TCP_SOCKET_BEATS));						
 						break;
-                   case ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT:						
-               		    mTCPClient.tcpConnect();
-						break;
-					
+                   case ServiceConfig.TCP_SOCKET_TYPE_RESPOND:	
+                	    String action=(String) msg.obj;
+                	    if(action.equals(ServiceConfig.TCPS_SERVER_FILEDOWNLOAD_FINISHED)){
+                	    	Toast.makeText(MyApp.getContext(), R.string.ad_res_download_finished, Toast.LENGTH_SHORT).show();
+                	    }else if(action.contains(ServiceConfig.TCP_SOCKET_BEATS)){
+                	    	beatsCount=ServiceConfig.SOCKET_MAX_WATING_TIME;
+                	    }
+						break;		
+                   case ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT:
+              		    if(null != mTCPClient && !mTCPClient.tcpConnect(this)){
+              		    	isSendBeats=false;
+   						   sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT,5000);
+              		    }
+						break;	
 					}
-					sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_BEATS,20*1000);
-
+					if(isSendBeats){
+						sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS,10*1000);
+					}
+					if(beatsCount--<0){
+						  sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);	
+					}
 				}
-			};
-	
+			};	
 			Looper.loop();
+		}
+		
+		
+		private void sendTcpMsg(Handler handler, String action, byte[] sendBuff){
+			if(null != mTCPClient){
+				mTCPClient.sendMessage(handler,ServiceConfig.TCP_SOCKET_BEATS,JsonPackage.sendMsgToByte(ServiceConfig.TCP_SOCKET_BEATS));						
+			}
 		}
 
 		/**

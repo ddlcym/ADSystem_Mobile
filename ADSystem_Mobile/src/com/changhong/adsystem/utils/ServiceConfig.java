@@ -7,7 +7,9 @@ public class ServiceConfig {
     public static String P2P_SERVER_IP = "192.168.1.100";
     public static  int P2P_SERVER_PORT = 20147;
 	public static String MAC="12:12:5D:13:B5:1F";
+  	public static final int SOCKET_MAX_WATING_TIME = 60;
 
+	
 	//执行结果定义
   	public final static String  ACTION_SUCCESS= "success";
   	public final static String  ACTION_FAILED= "failed";
@@ -40,6 +42,7 @@ public class ServiceConfig {
   	public final static String  TCPS_ACTION_STBINFOR= "getSTBInfo";
   	public final static String  TCPS_ACTION_DOWNLOADCONF= "pushDownloadConf";
   	public final static String  TCPS_SERVER_FILEDOWNLOAD= "fileDownloadPro";
+  	public final static String  TCPS_SERVER_FILEDOWNLOAD_FINISHED= "fileDownloadPro";
 
   	
   	public final static int  TCPS_ACTION_STBINFOR_CODE= 3001;
@@ -49,8 +52,10 @@ public class ServiceConfig {
   	/***************************************************TCP 通讯类型定义****************************************************************/
   	
 	public final static int  TCP_SOCKET_TYPE_REQUESR= 4001;
-  	public final static int  TCP_SOCKET_TYPE_BEATS= 4002;
-  	public final static int  TCP_SOCKET_TYPE_CREATECONNECT= 4003;
+  	public final static int  TCP_SOCKET_TYPE_SEND_BEATS= 4002;
+  	public final static int  TCP_SOCKET_TYPE_RECEIVE_BEATS= 4003;
+  	public final static int  TCP_SOCKET_TYPE_CREATECONNECT= 4004;
+  	public final static int  TCP_SOCKET_TYPE_RESPOND= 4005;
 
   
 }

@@ -102,22 +102,22 @@ public class ADMainActivity extends FragmentActivity {
 		mTabHost.getTabWidget().setVisibility(View.VISIBLE);
 	}
 
-//
-//	@Override
-//	protected void onNewIntent(Intent intent) {
-//		// 拦截Intent，保存Intent，在onResume中进行处理
-//		onHomeIntent = intent;
-//	}
-//
-//	@Override
-//	public void onResume() {
-//
-//		if (onHomeIntent != null) { // home键退出后通过intent启动程序
-//			// dosomething···
-//			onHomeIntent = null;
-//		}
-//		super.onResume();
-//	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		// 拦截Intent，保存Intent，在onResume中进行处理
+		onHomeIntent = intent;
+	}
+
+	@Override
+	public void onResume() {
+
+		if (onHomeIntent != null) { // home键退出后通过intent启动程序
+			// dosomething···
+			onHomeIntent = null;
+		}
+		super.onResume();
+	}
 	
 	private void sendUDPQurey(){
 		new UDPQuerySingleThread(handler).start();

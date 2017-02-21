@@ -137,7 +137,9 @@ public class StrategyPatternActivity extends Activity implements OnClickListener
 
 	private void initDevlist() {
 		focusDev = (TextView)findViewById(R.id.title);
-		focusDev.setText(R.string.ab_dev_title + devList.get(curDevIndex).mac);
+		if(null != devList && devList.size()>0){
+		    focusDev.setText(R.string.ab_dev_title + devList.get(curDevIndex).mac);
+		}
 		mDeviceSelectAdapter = new DeviceSelectAdapter(this, devList);
 		mdevSelectList.setAdapter(mDeviceSelectAdapter);
 		mdevSelectList.setOnItemClickListener(new OnItemClickListener() {
@@ -206,6 +208,7 @@ public class StrategyPatternActivity extends Activity implements OnClickListener
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_commit:// 上传数据
+			MyApplication.vibrator.vibrate(100);
 			String conf=JsonPackage.getDownLoadConf();
 			if(null != conf){
 				mP2PService.communicationWithBox(uiHander, ServiceConfig.TCPS_ACTION_DOWNLOADCONF_CODE, conf);
@@ -225,6 +228,17 @@ public class StrategyPatternActivity extends Activity implements OnClickListener
 	
 
 	
+	
+
+	@Override
+	protected void onDestroy() {
+        if(null != mP2PService){
+        	mP2PService.close();
+        }
+		super.onDestroy();
+	}
+
+
 	/****************************************************重写系统方法********************************************/
 	
 	
@@ -249,5 +263,8 @@ public class StrategyPatternActivity extends Activity implements OnClickListener
 				mProgressDialog = null;
 			}
 		}
+		
+		
+		
 		
 }

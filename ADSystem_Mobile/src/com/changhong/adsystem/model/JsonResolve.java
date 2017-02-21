@@ -164,10 +164,10 @@ public class JsonResolve {
 		}
 		return locationJson;
 	}
-	
-	
+
 	/**
 	 * 获取通信返回的内容
+	 * 
 	 * @param response
 	 * @return
 	 */
@@ -175,59 +175,65 @@ public class JsonResolve {
 		String reContent = "";
 		try {
 			JSONObject json = new JSONObject(response);
-			if(null != json){
-				reContent=getJsonObjectString(json,ServiceConfig.TCP_SOCKET_RESPOND);
+			if (null != json) {
+				reContent = getJsonObjectString(json,
+						ServiceConfig.TCP_SOCKET_RESPOND);
 			}
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return reContent;
 
 	}
-	
-	
-	
+
 	/**
 	 * 获取通信返回的内容
+	 * 
 	 * @param response
 	 * @return
 	 */
 	public static String getTcpAction(String response) {
 		String action = "";
+
 		try {
-			JSONObject json = new JSONObject(response);
-			if(null != json){
-				action=getJsonObjectString(json,ServiceConfig.TCP_SOCKET_ACTION);
-				
+			if (null != response) {
+				JSONObject json = new JSONObject(response);
+				if (null != json) {
+					action = getJsonObjectString(json,
+							ServiceConfig.TCP_SOCKET_ACTION);
+				}
 			}
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return action;
 
 	}
-	
-	public static DeviceInfor resolveDeviceInfo(String result){
-		DeviceInfor device=new DeviceInfor();
-		JSONObject obj=null;
+
+	public static DeviceInfor resolveDeviceInfo(String result) {
+		DeviceInfor device = new DeviceInfor();
+		JSONObject obj = null;
 		try {
-			obj=new JSONObject(result);
+			obj = new JSONObject(result);
 			device.setAdResouseId(getJsonObjectString(obj, "adResouseId"));
 			device.setAppVersion(getJsonObjInt(obj, "appVersion"));
 			device.setMac(getJsonObjectString(obj, "mac"));
-			device.setMemoryAvailable(Long.parseLong(getJsonObjectString(obj, "memoryAvailable")));
-			device.setMemoryTotal(Long.parseLong(getJsonObjectString(obj, "memoryTotal")));
-			device.setStbHardwareVersion(getJsonObjectString(obj, "stbFirmwareVersion"));
-			device.setStbSoftwareVersion(getJsonObjectString(obj, "stbHardwareVersion"));
-			
+			device.setMemoryAvailable(Long.parseLong(getJsonObjectString(obj,
+					"memoryAvailable")));
+			device.setMemoryTotal(Long.parseLong(getJsonObjectString(obj,
+					"memoryTotal")));
+			device.setStbHardwareVersion(getJsonObjectString(obj,
+					"stbFirmwareVersion"));
+			device.setStbSoftwareVersion(getJsonObjectString(obj,
+					"stbHardwareVersion"));
+
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 		return device;
 	}
 
@@ -268,7 +274,7 @@ public class JsonResolve {
 		}
 		return i;
 	}
-	
+
 	public static long getJsonObjLong(JSONObject json, String key) {
 		long i = 9999;
 		try {
@@ -290,11 +296,10 @@ public class JsonResolve {
 		}
 		return jsonObj;
 	}
-	
-	
-	public static String filterJsonMsg(String str) {
-		int offset=4*3;
-		byte[] jsonByte=str.getBytes();
-		return new DataUtil().byteToString(jsonByte, offset,false,jsonByte.length-offset);
+
+	public static String filterJsonMsg(byte[] jsonByte) {
+		int offset = 4 * 3;
+		return new DataUtil().byteToString(jsonByte, offset, false,
+				jsonByte.length - offset);
 	}
 }

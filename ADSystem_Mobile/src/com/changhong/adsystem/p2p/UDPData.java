@@ -52,7 +52,10 @@ public class UDPData {
 	
 	public String getServerIP() {
 		InetSocketAddress socketAddress = (InetSocketAddress) serverAddress;
-		return socketAddress.getAddress().getHostAddress();
+		if(null != socketAddress && null != socketAddress.getAddress()){
+			return socketAddress.getAddress().getHostAddress();
+		}
+		return null;
 	}
 	
 	

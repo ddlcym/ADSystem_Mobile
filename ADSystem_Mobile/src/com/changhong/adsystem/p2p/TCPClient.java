@@ -5,14 +5,13 @@ package com.changhong.adsystem.p2p;
  * 
  */
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-
-import android.graphics.Path.FillType;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -25,14 +24,20 @@ public class TCPClient {
 
 	private static TCPClient mTCPClient = null;
 	public boolean mClientFlag = false;
-	byte[] theData = null;
+	byte[] theSendData = null;
 	boolean isReqMedia = false;
 	Socket mSocket = null;
 	Map<String, Handler> mActionList = new HashMap<String, Handler>();
 	String oldSocketAddress = null;
 	ReceiveThread mReceiveThread = null;
 	String mRunLock = "runFlag";
+	String mSendMsg = "sendMsg";
 
+	private DataOutputStream dataOutputStream = null;
+	private DataInputStream dataInputStream = null;
+	private DataUtil mDataUtil=null;
+	private Handler deafultHandler=null;
+	
 	private TCPClient() {
 		initTCPClient();
 	}
@@ -45,30 +50,47 @@ public class TCPClient {
 	}
 
 	private void initTCPClient() {
-
+		mDataUtil=new DataUtil();
 	}
 
-	public boolean tcpConnect() {
+	public boolean tcpConnect(Handler handler) {
 		boolean isOk = false;
+		
 		try {
 			String curServerIP = UDPData.getInstance().getServerIP();
 
-			if (null == oldSocketAddress
-					|| !oldSocketAddress.equals(curServerIP)) {
-				socketRelease();
+			if (null != curServerIP) {
+				tcpSocketClose();
 				Log.i(TAG,
 						"-------------------p2p connect-------------------------");
 				mSocket = new Socket(curServerIP, ServiceConfig.P2P_SERVER_PORT);
 				if (mSocket.isConnected()) {
-					oldSocketAddress = curServerIP;
-					// 启动接收线程
-					mReceiveThread = new ReceiveThread(mSocket);
-					new Thread(mReceiveThread).start();
+					dataOutputStream = new DataOutputStream(mSocket.getOutputStream());
+					dataInputStream = new DataInputStream(mSocket.getInputStream());
+
+					if (null == oldSocketAddress || !oldSocketAddress.equals(curServerIP)) {
+						if (null != mReceiveThread)mReceiveThread.stopThread();
+						oldSocketAddress = curServerIP;
+						// 启动接收线程
+						mReceiveThread = new ReceiveThread(dataInputStream);
+						new Thread(mReceiveThread).start();
+					}
 					isOk = true;
+					deafultHandler=handler;
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+
+			try {
+				if (null != mSocket) {
+					mSocket.close();
+					mSocket = null;
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+
 		}
 		return isOk;
 	}
@@ -81,35 +103,38 @@ public class TCPClient {
 	 * @return
 	 */
 	public void sendMessage(Handler handler, String action, byte[] sendBuff) {
-		OutputStream mOutput = null;
 		try {
-			if (null != mSocket) {
+			if (null != sendBuff) {
 				Log.i(TAG, ">>>>>> socket send msg");
-				mOutput = mSocket.getOutputStream();
-				mOutput.write(sendBuff);
-				mOutput.flush();
+				dataOutputStream.write(sendBuff);
+				dataOutputStream.flush();
 				mActionList.put(action, handler);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				if (null != mOutput) {
-					mOutput.close();
-					mOutput = null;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
-	public void socketRelease() {
+	private void reTcpConnect(){
+		 if(null != deafultHandler){
+			 deafultHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);	
+		 }
+	}
+
+	public void tcpSocketClose() {
 
 		try {
-			if (null != mReceiveThread) {
-				mReceiveThread.stopThread();
+
+			if (null != dataInputStream) {
+				dataInputStream.close();
+				dataInputStream = null;
 			}
+
+			if (null != dataOutputStream) {
+				dataOutputStream.close();
+				dataOutputStream = null;
+			}
+
 			if (null != mSocket) {
 				mSocket.close();
 				mSocket = null;
@@ -117,6 +142,12 @@ public class TCPClient {
 
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void stopReceiveTask() {
+		if(null != mReceiveThread){
+			mReceiveThread.stopThread();
 		}
 	}
 
@@ -141,62 +172,16 @@ public class TCPClient {
 		return null;
 	}
 
-	public void ReceiveTask() {
-
-		String revStr = "";
-		char buffer[] = new char[1024];
-		BufferedReader mInput = null;
-
-		int len = -1;
-		try {
-			revStr = "";
-			Log.i(TAG, ">>>>>> start to read  buffer！！！！");
-
-			mInput = new BufferedReader(new InputStreamReader(
-					mSocket.getInputStream()));
-			while ((len = mInput.read(buffer)) != -1) {
-				revStr += new String(buffer, 0, len);
-				;
-			}
-
-			if (!revStr.isEmpty()) {
-				revStr = JsonResolve.filterJsonMsg(revStr);
-				if (!ServiceConfig.TCP_SOCKET_BEATS.equals(revStr)) {
-
-					String action = getTcpAction(revStr);
-					Handler mParentHandler = matchHandler(action);
-					if (null != mParentHandler) {
-						Message respondMsg = mParentHandler.obtainMessage();
-						respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
-						respondMsg.obj = JsonResolve.getTcpReponse(revStr);
-						mParentHandler.sendMessage(respondMsg);
-					}
-				}
-			}
-
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		} finally {
-			try {
-				if (null != mInput) {
-					mInput.close();
-					mInput = null;
-				}
-				Thread.sleep(1000);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+	
 
 	/********************************************************************************************/
 	class ReceiveThread implements Runnable {
 
-		Socket mSocket = null;
 		private boolean _run = true;
+		DataInputStream _Input = null;
 
-		public ReceiveThread(Socket socket) {
-			this.mSocket = socket;
+		public ReceiveThread(DataInputStream input) {
+			this._Input = input;
 		}
 
 		public void stopThread() {
@@ -212,58 +197,95 @@ public class TCPClient {
 			}
 			return isRunning;
 		}
-
 		@Override
 		public void run() {
-			String revStr = "";
-			char buffer[] = new char[1024];
-			BufferedReader mInput = null;
+			try {
+				if (null != _Input) {
+					int revalue=handleInputStream(_Input);
+					if(-1 == revalue){
+						reTcpConnect();
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				reTcpConnect();	
+			}
+           
+		}
+
+		private int handleInputStream(DataInputStream dataInputStream)
+				throws IOException {
+			final int cacheSize = 512;
+			final int MaxByteHeapSize = 1024 * 1024;
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			byte[] data = new byte[cacheSize];
+			byte[] dataLengthArr = new byte[4];
+			byte[] sessionIndexArr = new byte[4];
+			byte[] sessionArg2Arr = new byte[4];
+			int readSize = 0;
+			int dataLength = 0;
+			int sessionIndex = 0;
+			int sessionArg2 = 0;
 			while (isRunning()) {
-				int len = -1;
-				try {
-					revStr = "";
-					Log.i(TAG, ">>>>>> start to read  buffer！！！！");
+				readSize = dataInputStream.read(dataLengthArr);
+				if (readSize > 0) {
 
-					mInput = new BufferedReader(new InputStreamReader(
-							mSocket.getInputStream()));
-					while ((len = mInput.read(buffer)) != -1) {
-						revStr += new String(buffer, 0, len);
-						;
-					}
+					dataLength = mDataUtil.byteToInt32(dataLengthArr,0);
 
-					if (!revStr.isEmpty()) {
-						revStr = JsonResolve.filterJsonMsg(revStr);
-						if (!ServiceConfig.TCP_SOCKET_BEATS.equals(revStr)) {
+					if (dataLength > 0) {
+						Log.i(TAG, "begin read data,dataLength = " + dataLength);
 
-							String action = getTcpAction(revStr);
-							Handler mParentHandler = matchHandler(action);
-							if (null != mParentHandler) {
-								Message respondMsg = mParentHandler
-										.obtainMessage();
-								respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
-								respondMsg.obj = JsonResolve
-										.getTcpReponse(revStr);
-								mParentHandler.sendMessage(respondMsg);
+						// sessionIndex
+						readSize = dataInputStream.read(sessionIndexArr);
+						if (readSize < 0 && !isRunning()) {
+							return -1;
+						}
+						sessionIndex = mDataUtil.byteToInt32(sessionIndexArr,0);
+
+						// sessionArg2
+						readSize = dataInputStream.read(sessionArg2Arr);
+						// logi("sessionArg2Arr>>"+DataFrame.getDataString(sessionArg2Arr));
+						if (readSize < 0 && !isRunning()) {
+							return -1;
+						}
+						sessionArg2 = mDataUtil.byteToInt32(sessionArg2Arr,0);
+						byteArrayOutputStream.reset();
+						if (dataLength > MaxByteHeapSize) {
+							Log.i(TAG, "dataLength large than "
+									+ MaxByteHeapSize + ", new " + cacheSize
+									+ " bytes array.");
+							data = new byte[cacheSize];
+						} else {
+							data = new byte[dataLength];
+						}
+						do {
+
+							readSize = dataInputStream.read(data);
+							if (readSize != -1) {
+								byteArrayOutputStream.write(data, 0, readSize);
+								dataLength -= readSize;
 							}
+						} while (dataLength > 0 && readSize != -1);
+						String revStr = new String(byteArrayOutputStream.toByteArray());
+						String action = getTcpAction(revStr);
+						Handler mParentHandler = matchHandler(action);
+						if (null != mParentHandler) {
+							Message respondMsg = mParentHandler.obtainMessage();
+							respondMsg.what = ServiceConfig.SHOW_ACTION_RESULT;
+							respondMsg.obj = JsonResolve.getTcpReponse(revStr);
+							respondMsg.sendToTarget();
+						}else{
+							Message respondMsg = deafultHandler.obtainMessage();
+							respondMsg.what = ServiceConfig.TCP_SOCKET_TYPE_RESPOND;
+							respondMsg.obj = revStr;
+							respondMsg.sendToTarget();
 						}
-					}
-
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} finally {
-					try {
-						if (null != mInput) {
-							mInput.close();
-							mInput = null;
-						}
-						Thread.sleep(1000);
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
 				}
 			}
+			byteArrayOutputStream.close();
+			return 0;
 		}
-
 	}
 
 }
