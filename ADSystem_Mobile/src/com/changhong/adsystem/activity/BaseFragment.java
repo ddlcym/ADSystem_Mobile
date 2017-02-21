@@ -31,7 +31,7 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
     	this.mActivity=getActivity();
     	mHttpRequest = HttpRequest.getInstance();
     	mP2PService = P2PService.creatP2PService();
-    	mP2PService.creatTcpConnect();
+//    	mP2PService.creatTcpConnect();
 	}
 
 

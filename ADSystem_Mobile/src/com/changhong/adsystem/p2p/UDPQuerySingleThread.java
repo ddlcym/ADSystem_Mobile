@@ -216,6 +216,7 @@ public class UDPQuerySingleThread extends Thread {
 				UDPData.getInstance().setServerPort(TCPServerPort);
 			}
 		}
+		parentHandle.sendEmptyMessage(Configure.UDPQuerySuccess);
 		state = State.END;
 	}
 	

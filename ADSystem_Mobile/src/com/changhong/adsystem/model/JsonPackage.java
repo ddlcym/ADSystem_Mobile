@@ -51,8 +51,12 @@ public class JsonPackage {
 		JSONObject json = null;
 		try {
 			json = new JSONObject();
-			json.put(ServiceConfig.TCP_SOCKET_ACTION, action);
-			json.put(ServiceConfig.TCP_SOCKET_REQUEST, new JSONObject(msg));
+			json.put(ServiceConfig.TCP_SOCKET_ACTION, action);	
+			if(msg.isEmpty()){
+				json.put(ServiceConfig.TCP_SOCKET_REQUEST, new JSONObject());
+			}else{
+				json.put(ServiceConfig.TCP_SOCKET_REQUEST, new JSONObject(msg));
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

@@ -1,13 +1,7 @@
 package com.changhong.adsystem.activity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.Handler;
 import android.os.Message;
-
-import com.changhong.adsystem_mobile.R;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -16,8 +10,6 @@ import com.changhong.adsystem.model.DeviceInfor;
 import com.changhong.adsystem.model.JsonPackage;
 import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.p2p.P2PService;
-import com.changhong.adsystem.p2p.TCPClient;
-import com.changhong.adsystem.p2p.UDPQuerySingleThread;
 import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem.utils.ServiceConfig;
 import com.changhong.adsystem_mobile.R;
@@ -34,14 +26,15 @@ public class DeviceManagerF extends BaseFragment {
 	
 	private DeviceInfor device=null;
 	
-	private Handler handler=new Handler(){
+	private  Handler handler=new Handler(){
 		String result=null;
 		@Override
 		public void handleMessage(Message msg) {
 			// TODO Auto-generated method stub
 			switch (msg.what){
-			case Configure.TCP_DEVICES_INFO:
+			case ServiceConfig.TCPS_ACTION_STBINFOR_CODE:
 				result=(String) msg.obj;
+				Log.i("mmmm", "DeviceManagerF-receive-devices-info:"+result);
 				device=JsonResolve.resolveDeviceInfo(result);
 				setData(device);
 				
@@ -109,7 +102,7 @@ public class DeviceManagerF extends BaseFragment {
 	
 	private void queryDeviceInfo(){
 		String sendMsg=JsonPackage.queryDeviceInfoParams();
-		P2PService.creatP2PService().communicationWithBox(handler, Configure.TCP_DEVICES_INFO, sendMsg);
+		P2PService.creatP2PService().communicationWithBox(handler, ServiceConfig.TCPS_ACTION_STBINFOR_CODE, "");
 	}
 	
 	

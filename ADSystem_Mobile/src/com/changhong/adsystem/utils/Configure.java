@@ -27,6 +27,7 @@ public class Configure {
 	
 	public final static int UDPQueryResult=3001;
 	public final static int UDPQueryTimeOut=3002;	
+	public final static int UDPQuerySuccess=3003;	
 	//TCP通信定义
 	public final static int TCP_DEVICES_INFO=3101;
 	

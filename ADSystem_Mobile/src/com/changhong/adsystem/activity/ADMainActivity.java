@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.changhong.adsystem.http.VolleyTool;
+import com.changhong.adsystem.p2p.P2PService;
 import com.changhong.adsystem.p2p.UDPQuerySingleThread;
 import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem.nanohttpd.HTTPDService;
@@ -44,6 +45,9 @@ public class ADMainActivity extends FragmentActivity {
 				case Configure.UDPQueryTimeOut:
 					Toast.makeText(ADMainActivity.this, "未发现设备", Toast.LENGTH_SHORT).show();
 					break;
+				case Configure.UDPQuerySuccess:
+			    	P2PService.creatP2PService().creatTcpConnect();
+					
 			}
 		}
 		

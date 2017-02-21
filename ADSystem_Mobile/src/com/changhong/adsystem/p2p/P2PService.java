@@ -4,16 +4,19 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.changhong.adsystem.activity.MyApp;
@@ -115,10 +118,11 @@ public class P2PService {
 						String sendMsg = null;
 						mAction = matchAction(msg.arg1);
 						sendMsg = (String) msg.obj;
-						if (null != mAction && !mAction.isEmpty() && null != sendMsg && !sendMsg.isEmpty()) {
+						if (null != mAction && !mAction.isEmpty()) {
 							sendMsg = JsonPackage.formateTcpSendMsg(mAction,sendMsg);
 							sendMsg=sendMsg.replace("\\","").replace(" ", "");
-							sendTcpMsg(mParentHandler,mAction,JsonPackage.sendMsgToByte(sendMsg));						
+							sendTcpMsg(mParentHandler,mAction,JsonPackage.sendMsgToByte(sendMsg));	
+							Log.i(Tag, "sendTcpMsg --->>>"+sendMsg);
 						}
 						break;
 					case ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS:						
@@ -131,7 +135,9 @@ public class P2PService {
                 	    }else if(action.contains(ServiceConfig.TCPS_ACTION_BEATS)){
                 	    	beatsCount=ServiceConfig.SOCKET_MAX_WATING_TIME;
                 	    }
+
           		    	isSendBeats=false;
+
 						break;		
                    case ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT:
               		    if(null != mTCPClient && !mTCPClient.tcpConnect(this)){
@@ -141,7 +147,7 @@ public class P2PService {
 						break;	
 					}
 					if(isSendBeats){
-						sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS,10*1000);
+						sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS,20*1000);
 					}
 					if(beatsCount--<0){
 						  sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);	
