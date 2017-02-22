@@ -77,7 +77,7 @@ public class DeviceManagerF extends BaseFragment {
 		memoryAvailable.setText(mStrAvailable);
 		stb_mac.setText(device.getMac());
 		adResourceID.setText(device.getAdResouseId());
-		appVersion.setText(device.getAppVersion());
+		appVersion.setText(device.getAppVersion()+"");
 	}
 	
 	@Override

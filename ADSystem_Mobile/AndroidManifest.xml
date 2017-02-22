@@ -42,15 +42,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> 
-        <activity android:name="com.changhong.adsystem.activity.LoginActivity" />
+        <activity android:name="com.changhong.adsystem.activity.LoginActivity" >
+            
+            
+        </activity>
+            
+            
         <activity android:name="com.changhong.adsystem.activity.StrategyPatternActivity" />
         
         
           
-        <activity android:name="com.changhong.adsystem.activity.LoginActivity">
-            
-            
-        </activity>
        <service android:name="com.changhong.adsystem.nanohttpd.HTTPDService" />
              
     </application>
