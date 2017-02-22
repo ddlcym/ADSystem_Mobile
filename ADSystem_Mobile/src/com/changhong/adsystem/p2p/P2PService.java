@@ -33,7 +33,17 @@ public class P2PService {
 	private TCPClient mTCPClient = null;
 	// socketServer接收服务器：
 	private Thread mSocketCommunication = null;
-	private boolean isConnected = false;
+	private boolean isUDPConnected = false;
+
+	
+
+	public boolean isUDPConnected() {
+		return isUDPConnected;
+	}
+
+	public void setUDPConnected(boolean isUDPConnected) {
+		this.isUDPConnected = isUDPConnected;
+	}
 
 	private P2PService() {
 		initP2PService();
@@ -57,15 +67,18 @@ public class P2PService {
 		mSocketCommunication.start();
 
 	}
+	
+	
+	
 
 	/**
 	 * 创建TCp连接
 	 */
 	public void creatTcpConnect() {
+		isUDPConnected=true;
 		mTCPClient = TCPClient.instance();
 		if (null != mMsgHandler) {
-			mMsgHandler
-					.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);
+			mMsgHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);
 		}
 	}
 
@@ -90,6 +103,7 @@ public class P2PService {
 	}
 
 	public void close() {
+		isUDPConnected=false;
 		if (null != mTCPClient) {
 			mTCPClient.stopReceiveTask();
 			mTCPClient.tcpSocketClose();
@@ -153,7 +167,7 @@ public class P2PService {
 
 						break;
 					case ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT:
-						if (null != mTCPClient
+						if (isUDPConnected && null != mTCPClient
 								&& !mTCPClient.tcpConnect(mMsgHandler)) {
 							isSendBeats = false;
 							sendEmptyMessageDelayed(

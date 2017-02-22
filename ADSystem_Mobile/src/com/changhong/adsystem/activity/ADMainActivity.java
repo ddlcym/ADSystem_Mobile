@@ -47,6 +47,8 @@ public class ADMainActivity extends FragmentActivity {
 					break;
 				case Configure.UDPQuerySuccess:
 			    	P2PService.creatP2PService().creatTcpConnect();
+				case Configure.UDPQueryFailed:
+			    	P2PService.creatP2PService().close();
 					
 			}
 		}
