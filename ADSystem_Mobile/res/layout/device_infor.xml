@@ -134,10 +134,14 @@
 
                     <TextView
                         style="@style/usertext"
-                        android:id="@+id/ad_resource_id"
                         android:text="广告资源ID" />
 
-                    <ImageView style="@style/img_arrow" />
+                    <TextView
+                        android:id="@+id/ad_resource_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="1.0" />
                 </LinearLayout>
 
                 <!-- 分割线 -->
