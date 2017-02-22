@@ -63,7 +63,6 @@ public class StrategyPatternActivity extends Activity implements OnClickListener
 		setContentView(R.layout.fragment_ad_strategy);
 		mHttpRequest = HttpRequest.getInstance();
     	mP2PService = P2PService.creatP2PService();
-    	mP2PService.creatTcpConnect();
     	
     	
     	Intent intent=getIntent();

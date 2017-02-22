@@ -53,63 +53,16 @@ public class TCPClient {
 		mDataUtil=new DataUtil();
 	}
 
+	
+	
 	public boolean tcpConnect(Handler handler) {
 		boolean isOk = false;
 		
 		try {
 			String curServerIP = UDPData.getInstance().getServerIP();
 
-			if (null != curServerIP &&(null == oldSocketAddress || !oldSocketAddress.equals(curServerIP))) {
-				tcpSocketClose();
-				Log.i(TAG,
-						"-------------------p2p connect-------------------------");
-				mSocket = new Socket(curServerIP, ServiceConfig.P2P_SERVER_PORT);
-				if (mSocket.isConnected()) {
-					dataOutputStream = new DataOutputStream(mSocket.getOutputStream());
-					dataInputStream = new DataInputStream(mSocket.getInputStream());
-
-					
-						if (null != mReceiveThread)mReceiveThread.stopThread();
-						oldSocketAddress = curServerIP;
-						// 启动接收线程
-						mReceiveThread = new ReceiveThread(dataInputStream);
-						new Thread(mReceiveThread).start();
-					
-					isOk = true;
-					deafultHandler=handler;
-				}
-			}else {
-				 if(null != mSocket && mSocket.isConnected()){
-						isOk = true;
-				 }
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			isOk=false;
-			try {
-				if (null != mSocket) {
-					mSocket.close();
-					mSocket = null;
-				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-
-		}
-		return isOk;
-	}
-	
-	
-	public boolean retcpConnect(Handler handler) {
-		boolean isOk = false;
-		
-		try {
-			String curServerIP = UDPData.getInstance().getServerIP();
-
 			if (null != curServerIP) {
-				tcpSocketClose();
-				Log.i(TAG,
-						"-------------------p2p connect-------------------------");
+				tcpSocketClose();				
 				mSocket = new Socket(curServerIP, ServiceConfig.P2P_SERVER_PORT);
 				if (mSocket.isConnected()) {
 					dataOutputStream = new DataOutputStream(mSocket.getOutputStream());
@@ -124,6 +77,7 @@ public class TCPClient {
 					}
 					isOk = true;
 					deafultHandler=handler;
+					Log.i(TAG,	"-------------------p2p_Socket connect success-------------------------");
 				}
 			}
 		} catch (IOException e) {
