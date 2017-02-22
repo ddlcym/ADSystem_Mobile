@@ -30,11 +30,11 @@ public class P2PService {
 	private static P2PService intance;
 	private Handler mParentHandler;
 	private Handler mMsgHandler;
-	private TCPClient mTCPClient=null;
+	private TCPClient mTCPClient = null;
 	// socketServer接收服务器：
 	private Thread mSocketCommunication = null;
-	private boolean isConnected=false;
-	
+	private boolean isConnected = false;
+
 	private P2PService() {
 		initP2PService();
 	}
@@ -50,24 +50,24 @@ public class P2PService {
 	 * 初始化全局变量，启动那个服务器
 	 */
 	private void initP2PService() {
-		
+
 		// 启动接收线程:
 		clientCommunicationThread commThread = new clientCommunicationThread();
 		mSocketCommunication = new Thread(commThread);
-		mSocketCommunication.start();		
+		mSocketCommunication.start();
 
 	}
-	
+
 	/**
 	 * 创建TCp连接
 	 */
-	public void creatTcpConnect(){
-		mTCPClient=TCPClient.instance();
-		if(null != mMsgHandler){
-		   mMsgHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);
+	public void creatTcpConnect() {
+		mTCPClient = TCPClient.instance();
+		if (null != mMsgHandler) {
+			mMsgHandler
+					.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);
 		}
 	}
-	
 
 	/**
 	 * 接收端返回的信息
@@ -79,24 +79,26 @@ public class P2PService {
 		mParentHandler = handler;
 		// 发送消息给子线程
 		if (null != mMsgHandler) {
-			mMsgHandler.removeMessages(ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS);
+			mMsgHandler
+					.removeMessages(ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS);
 			Message sendMsg = mMsgHandler.obtainMessage();
-			sendMsg.what=ServiceConfig.TCP_SOCKET_TYPE_REQUESR;
+			sendMsg.what = ServiceConfig.TCP_SOCKET_TYPE_REQUESR;
 			sendMsg.arg1 = action;
 			sendMsg.obj = msg;
 			mMsgHandler.sendMessage(sendMsg);
 		}
 	}
 
-	public void close() {		
+	public void close() {
 		if (null != mTCPClient) {
 			mTCPClient.stopReceiveTask();
-			mTCPClient.tcpSocketClose();			
+			mTCPClient.tcpSocketClose();
 			mTCPClient = null;
 		}
 	}
 
-	int beatsCount=ServiceConfig.SOCKET_MAX_WATING_TIME;
+	int beatsCount = ServiceConfig.SOCKET_MAX_WATING_TIME;
+
 	/********************************************************** clientCommunicationThread *******************************************************************/
 
 	private class clientCommunicationThread implements Runnable {
@@ -111,56 +113,73 @@ public class P2PService {
 
 			mMsgHandler = new Handler() {
 				public void handleMessage(Message msg) {
-					boolean isSendBeats=true;
-					switch(msg.what){
+					boolean isSendBeats = true;
+					switch (msg.what) {
 					case ServiceConfig.TCP_SOCKET_TYPE_REQUESR:
-					
+
 						String sendMsg = null;
 						mAction = matchAction(msg.arg1);
 						sendMsg = (String) msg.obj;
 						if (null != mAction && !mAction.isEmpty()) {
-							sendMsg = JsonPackage.formateTcpSendMsg(mAction,sendMsg);
-							sendMsg=sendMsg.replace("\\","").replace(" ", "");
-							sendTcpMsg(mParentHandler,mAction,JsonPackage.sendMsgToByte(sendMsg));	
-							Log.i(Tag, "sendTcpMsg --->>>"+sendMsg);
+							sendMsg = JsonPackage.formateTcpSendMsg(mAction,
+									sendMsg);
+							sendMsg = sendMsg.replace("\\", "")
+									.replace(" ", "");
+							sendTcpMsg(mParentHandler, mAction,
+									JsonPackage.sendMsgToByte(sendMsg));
+							Log.i(Tag, "sendTcpMsg --->>>" + sendMsg);
 						}
 						break;
-					case ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS:						
-						sendTcpMsg(this,ServiceConfig.TCPS_ACTION_BEATS,JsonPackage.sendMsgToByte(ServiceConfig.TCPS_ACTION_BEATS));						
+					case ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS:
+						sendTcpMsg(
+								null,
+								ServiceConfig.TCPS_ACTION_BEATS,
+								JsonPackage
+										.sendMsgToByte(ServiceConfig.TCPS_ACTION_BEATS));
 						break;
-                   case ServiceConfig.TCP_SOCKET_TYPE_RESPOND:	
-                	    String action=(String) msg.obj;
-                	    if(action.equals(ServiceConfig.TCPS_SERVER_FILEDOWNLOAD_FINISHED)){
-                	    	Toast.makeText(MyApp.getContext(), R.string.ad_res_download_finished, Toast.LENGTH_SHORT).show();
-                	    }else if(action.contains(ServiceConfig.TCPS_ACTION_BEATS)){
-                	    	beatsCount=ServiceConfig.SOCKET_MAX_WATING_TIME;
-                	    }
+					case ServiceConfig.TCP_SOCKET_TYPE_RESPOND:
+						String action = (String) msg.obj;
+						if (action
+								.equals(ServiceConfig.TCPS_SERVER_FILEDOWNLOAD_FINISHED)) {
+							Toast.makeText(MyApp.getContext(),
+									R.string.ad_res_download_finished,
+									Toast.LENGTH_SHORT).show();
+						}
+						isSendBeats = false;
+						break;
+					case ServiceConfig.TCP_SOCKET_TYPE_RECEIVE_BEATS:
+						beatsCount = ServiceConfig.SOCKET_MAX_WATING_TIME;
+						isSendBeats = false;
 
-          		    	isSendBeats=false;
-
-						break;		
-                   case ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT:
-              		    if(null != mTCPClient && !mTCPClient.tcpConnect(this)){
-              		    	isSendBeats=false;
-   						    sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT,5000);
-              		    }
-						break;	
+						break;
+					case ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT:
+						if (null != mTCPClient
+								&& !mTCPClient.tcpConnect(mMsgHandler)) {
+							isSendBeats = false;
+							sendEmptyMessageDelayed(
+									ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT,
+									5000);
+						}
+						break;
 					}
-					if(isSendBeats){
-						sendEmptyMessageDelayed(ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS,20*1000);
+					if (isSendBeats) {
+						sendEmptyMessageDelayed(
+								ServiceConfig.TCP_SOCKET_TYPE_SEND_BEATS,
+								20 * 1000);
 					}
-					if(beatsCount--<0){
-						  sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);	
+					if (beatsCount-- < 0) {
+						beatsCount = ServiceConfig.SOCKET_MAX_WATING_TIME;
+						sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);
 					}
 				}
-			};	
+			};
 			Looper.loop();
 		}
-		
-		
-		private void sendTcpMsg(Handler handler, String action, byte[] sendBuff){
-			if(null == mTCPClient || null == sendBuff)return;
-		    mTCPClient.sendMessage(handler,action,sendBuff);						
+
+		private void sendTcpMsg(Handler handler, String action, byte[] sendBuff) {
+			if (null == mTCPClient || null == sendBuff)
+				return;
+			mTCPClient.sendMessage(handler, action, sendBuff);
 
 		}
 
@@ -215,8 +234,8 @@ public class P2PService {
 			action = ServiceConfig.TCPS_ACTION_DOWNLOADCONF;
 		else if (ServiceConfig.TCPS_ACTION_STBINFOR_CODE == actionInt)
 			action = ServiceConfig.TCPS_ACTION_STBINFOR;
-		else 
-			action =ServiceConfig.TCPS_ACTION_BEATS;
+		else
+			action = ServiceConfig.TCPS_ACTION_BEATS;
 		return action;
 	}
 
@@ -257,24 +276,24 @@ public class P2PService {
 		}
 		return "127.0.0.1";
 	}
-	
-	
-	public static String getIp(){
-	     WifiManager wm=(WifiManager)MyApp.getContext().getSystemService(Context.WIFI_SERVICE);
-	     //检查Wifi状态  
-	     if(!wm.isWifiEnabled())wm.setWifiEnabled(true);
-	     WifiInfo wi=wm.getConnectionInfo();
-	     //获取32位整型IP地址  
-	     int ipAdd=wi.getIpAddress();
-	     //把整型地址转换成“*.*.*.*”地址  
-	     String ip=intToIp(ipAdd);
-	     return ip;
-	 }
-	 private static String intToIp(int i) {
-	     return (i & 0xFF ) + "." +
-	     ((i >> 8 ) & 0xFF) + "." +
-	     ((i >> 16 ) & 0xFF) + "." +
-	     ( i >> 24 & 0xFF) ;
-	 } 
+
+	public static String getIp() {
+		WifiManager wm = (WifiManager) MyApp.getContext().getSystemService(
+				Context.WIFI_SERVICE);
+		// 检查Wifi状态
+		if (!wm.isWifiEnabled())
+			wm.setWifiEnabled(true);
+		WifiInfo wi = wm.getConnectionInfo();
+		// 获取32位整型IP地址
+		int ipAdd = wi.getIpAddress();
+		// 把整型地址转换成“*.*.*.*”地址
+		String ip = intToIp(ipAdd);
+		return ip;
+	}
+
+	private static String intToIp(int i) {
+		return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "." + ((i >> 16) & 0xFF)
+				+ "." + (i >> 24 & 0xFF);
+	}
 
 }

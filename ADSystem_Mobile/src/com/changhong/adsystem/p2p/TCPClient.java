@@ -35,9 +35,9 @@ public class TCPClient {
 
 	private DataOutputStream dataOutputStream = null;
 	private DataInputStream dataInputStream = null;
-	private DataUtil mDataUtil=null;
-	private Handler deafultHandler=null;
-	
+	private DataUtil mDataUtil = null;
+	private Handler deafultHandler = null;
+
 	private TCPClient() {
 		initTCPClient();
 	}
@@ -50,34 +50,40 @@ public class TCPClient {
 	}
 
 	private void initTCPClient() {
-		mDataUtil=new DataUtil();
+		mDataUtil = new DataUtil();
 	}
 
-	
-	
 	public boolean tcpConnect(Handler handler) {
 		boolean isOk = false;
-		
+
 		try {
 			String curServerIP = UDPData.getInstance().getServerIP();
 
 			if (null != curServerIP) {
-				tcpSocketClose();				
+				tcpSocketClose();
 				mSocket = new Socket(curServerIP, ServiceConfig.P2P_SERVER_PORT);
 				if (mSocket.isConnected()) {
-					dataOutputStream = new DataOutputStream(mSocket.getOutputStream());
-					dataInputStream = new DataInputStream(mSocket.getInputStream());
+					dataOutputStream = new DataOutputStream(
+							mSocket.getOutputStream());
+					dataInputStream = new DataInputStream(
+							mSocket.getInputStream());
 
-					if (null == oldSocketAddress || !oldSocketAddress.equals(curServerIP)) {
-						if (null != mReceiveThread)mReceiveThread.stopThread();
+					if (null == oldSocketAddress
+							|| !oldSocketAddress.equals(curServerIP)) {
+						if (null != mReceiveThread)
+							mReceiveThread.stopThread();
 						oldSocketAddress = curServerIP;
 						// 启动接收线程
 						mReceiveThread = new ReceiveThread(dataInputStream);
 						new Thread(mReceiveThread).start();
+						Log.i(TAG,
+								"-------------------p2p_Socket new connect-------------------------");
+
 					}
 					isOk = true;
-					deafultHandler=handler;
-					Log.i(TAG,	"-------------------p2p_Socket connect success-------------------------");
+					deafultHandler = handler;
+					Log.i(TAG,
+							"-------------------p2p_Socket connect success-------------------------");
 				}
 			}
 		} catch (IOException e) {
@@ -116,10 +122,11 @@ public class TCPClient {
 		}
 	}
 
-	private void reTcpConnect(){
-		 if(null != deafultHandler){
-			 deafultHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);	
-		 }
+	private void reTcpConnect() {
+		if (null != deafultHandler) {
+			deafultHandler
+					.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_CREATECONNECT);
+		}
 	}
 
 	public void tcpSocketClose() {
@@ -145,9 +152,9 @@ public class TCPClient {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void stopReceiveTask() {
-		if(null != mReceiveThread){
+		if (null != mReceiveThread) {
 			mReceiveThread.stopThread();
 		}
 	}
@@ -159,9 +166,11 @@ public class TCPClient {
 	 * @return
 	 */
 	private String getTcpAction(String msg) {
-		String action=JsonResolve.getTcpAction(msg);
-		if(action.isEmpty() && msg.contains(ServiceConfig.TCPS_ACTION_BEATS)){
-			action=ServiceConfig.TCPS_ACTION_BEATS;
+		String action = "";
+		if (msg.contains(ServiceConfig.TCPS_ACTION_BEATS)) {
+			action = ServiceConfig.TCPS_ACTION_BEATS;
+		} else {
+			action = JsonResolve.getTcpAction(msg);
 		}
 		return action;
 	}
@@ -176,8 +185,6 @@ public class TCPClient {
 		}
 		return null;
 	}
-
-	
 
 	/********************************************************************************************/
 	class ReceiveThread implements Runnable {
@@ -202,20 +209,24 @@ public class TCPClient {
 			}
 			return isRunning;
 		}
+
 		@Override
 		public void run() {
 			try {
 				if (null != _Input) {
-					int revalue=handleInputStream(_Input);
-					if(-1 == revalue){
+					int revalue = handleInputStream(_Input);
+					if (-1 == revalue) {
 						reTcpConnect();
 					}
 				}
 			} catch (IOException e) {
+				Log.i(TAG, "---------------------handleInputStream error------------------------");
 				e.printStackTrace();
-				reTcpConnect();	
+				Log.i(TAG, "---------------------handleInputStream error 1111------------------------");
+
+				reTcpConnect();
 			}
-           
+
 		}
 
 		private int getActionCode(String action) {
@@ -226,12 +237,11 @@ public class TCPClient {
 				actionInt = ServiceConfig.TCPS_ACTION_DOWNLOADCONF_CODE;
 			else if (ServiceConfig.TCPS_SERVER_FILEDOWNLOAD.equals(action))
 				actionInt = ServiceConfig.TCPS_SERVER_FILEDOWNLOAD_CODE;
-			else if (ServiceConfig.TCPS_ACTION_BEATS.equals(action)) 
-				actionInt =ServiceConfig.TCPS_ACTION_BEATS_CODE;
+			else if (ServiceConfig.TCPS_ACTION_BEATS.equals(action))
+				actionInt = ServiceConfig.TCP_SOCKET_TYPE_RECEIVE_BEATS;
 			return actionInt;
 		}
-		
-		
+
 		private int handleInputStream(DataInputStream dataInputStream)
 				throws IOException {
 			final int cacheSize = 512;
@@ -249,7 +259,7 @@ public class TCPClient {
 				readSize = dataInputStream.read(dataLengthArr);
 				if (readSize > 0) {
 
-					dataLength = mDataUtil.byteToInt32(dataLengthArr,0);
+					dataLength = mDataUtil.byteToInt32(dataLengthArr, 0);
 
 					if (dataLength > 0) {
 						Log.i(TAG, "begin read data,dataLength = " + dataLength);
@@ -259,7 +269,8 @@ public class TCPClient {
 						if (readSize < 0 && !isRunning()) {
 							return -1;
 						}
-						sessionIndex = mDataUtil.byteToInt32(sessionIndexArr,0);
+						sessionIndex = mDataUtil
+								.byteToInt32(sessionIndexArr, 0);
 
 						// sessionArg2
 						readSize = dataInputStream.read(sessionArg2Arr);
@@ -267,7 +278,7 @@ public class TCPClient {
 						if (readSize < 0 && !isRunning()) {
 							return -1;
 						}
-						sessionArg2 = mDataUtil.byteToInt32(sessionArg2Arr,0);
+						sessionArg2 = mDataUtil.byteToInt32(sessionArg2Arr, 0);
 						byteArrayOutputStream.reset();
 						if (dataLength > MaxByteHeapSize) {
 							Log.i(TAG, "dataLength large than "
@@ -289,17 +300,18 @@ public class TCPClient {
 						String action = getTcpAction(revStr);
 						Handler mParentHandler = matchHandler(action);
 						if (null != mParentHandler) {
-							Log.i(TAG, "TCP response is  --->>>"+revStr);
+							Log.i(TAG, "TCP response is  --->>>" + revStr);
 							Message respondMsg = mParentHandler.obtainMessage();
 							respondMsg.what = getActionCode(action);
 							respondMsg.obj = JsonResolve.getTcpReponse(revStr);
 							respondMsg.sendToTarget();
-						}else if (null != deafultHandler){
-					
-							Message respondMsg = deafultHandler.obtainMessage();
-							respondMsg.what = ServiceConfig.TCP_SOCKET_TYPE_RESPOND;
-							respondMsg.obj = revStr;
-							respondMsg.sendToTarget();
+						} else if (null != deafultHandler) {
+
+							if(action.equals(ServiceConfig.TCPS_ACTION_BEATS)){
+								deafultHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_RECEIVE_BEATS);
+							}else if(action.equals(ServiceConfig.TCPS_SERVER_FILEDOWNLOAD)){
+								deafultHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_RESPOND);	
+							}
 						}
 					}
 				}
