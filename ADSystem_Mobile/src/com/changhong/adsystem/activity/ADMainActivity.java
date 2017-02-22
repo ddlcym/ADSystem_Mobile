@@ -44,6 +44,7 @@ public class ADMainActivity extends FragmentActivity {
 			switch (msg.what){
 				case Configure.UDPQueryTimeOut:
 					Toast.makeText(ADMainActivity.this, "未发现设备", Toast.LENGTH_SHORT).show();
+			    	P2PService.creatP2PService().close();
 					break;
 				case Configure.UDPQuerySuccess:
 			    	P2PService.creatP2PService().creatTcpConnect();
