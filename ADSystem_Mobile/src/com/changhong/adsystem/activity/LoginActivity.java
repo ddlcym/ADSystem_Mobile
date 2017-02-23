@@ -195,9 +195,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 		case R.id.login: // 登陆
 			strContent=et_pass.getText().toString().trim();
 			//正式代码，请求验证码
-//			HttpRequest.getInstance().login(UiMangerHandler,mobile, strContent);
+			HttpRequest.getInstance().login(UiMangerHandler,mobile, strContent);
 			//临时的测试，直接登录
-			UiMangerHandler.sendEmptyMessage( Class_Constant.RECEIVE_SECURITYCODE);
+//			UiMangerHandler.sendEmptyMessage( Class_Constant.RECEIVE_SECURITYCODE);
 
 			break;
 
