@@ -28,7 +28,7 @@ import com.changhong.adsystem_mobile.R;
 public class CommunityFragment extends BaseFragment {
 
 	protected static final String Tag = "CommunityFragment";
-
+	
 	// View定义
 	ListView mCommunityList = null;
 	RelativeLayout mSearchNotice = null;
@@ -38,6 +38,8 @@ public class CommunityFragment extends BaseFragment {
 	//小区列表显示适配器
 	CommunityAdapter mCommunityAdapter = null;
 	List<CommunityInfor> mCommunityInfors = null;
+	
+	
 
 	@Override
 	protected int getLayoutId() {
@@ -71,15 +73,15 @@ public class CommunityFragment extends BaseFragment {
 						return;
 					}
 					// 进入广告策略页面
-//					FragmentTransaction transaction = getFragmentManager()
-//							.beginTransaction();
-//					transaction.replace(R.id.contentLayout,
-//							new StrategyPatternFragment(devList));
-//					transaction.addToBackStack(null);
-//					transaction.commit();
-					Intent intent=new Intent(getActivity(),StrategyPatternActivity.class);
-					intent.putExtra("deviceInfors", (Serializable)devList);
-					startActivity(intent);
+					FragmentTransaction transaction = getFragmentManager()
+							.beginTransaction();
+					transaction.replace(R.id.contentLayout,
+							new StrategyPatternFragment(devList));
+					transaction.addToBackStack(null);
+					transaction.commit();
+//					Intent intent=new Intent(getActivity(),StrategyPatternActivity.class);
+//					intent.putExtra("deviceInfors", (Serializable)devList);
+//					startActivity(intent);
 				}
 
 			}

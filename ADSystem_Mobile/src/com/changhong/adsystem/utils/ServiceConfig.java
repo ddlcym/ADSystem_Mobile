@@ -40,10 +40,9 @@ public class ServiceConfig {
   	public final static String  TCPS_ACTION_BEATS= "_hb";  	
   	public final static String  TCPS_ACTION_STBINFOR= "getSTBInfo";
   	public final static String  TCPS_ACTION_DOWNLOADCONF= "pushDownloadConf";
-  	public final static String  TCPS_SERVER_FILEDOWNLOAD= "fileDownloadPro";
+  	public final static String  TCPS_SERVER_FILEDOWNLOAD= "downloadResourceFinished";
   	public final static String  TCPS_SERVER_FILEDOWNLOAD_FINISHED= "fileDownloadPro";
 
-  	
   	public final static int  TCPS_ACTION_STBINFOR_CODE= 3001;
   	public final static int  TCPS_ACTION_DOWNLOADCONF_CODE= 3002;
   	public final static int  TCPS_SERVER_FILEDOWNLOAD_CODE= 3003;

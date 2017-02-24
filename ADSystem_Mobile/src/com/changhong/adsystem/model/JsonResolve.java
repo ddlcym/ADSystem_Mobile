@@ -70,13 +70,29 @@ public class JsonResolve {
 				DeviceInfor dev = new DeviceInfor();
 				dev.id = getJsonObjectString(itemObj, "uuid");
 				dev.mac = getJsonObjectString(itemObj, "mac");
-				dev.ssid = getJsonObjectString(itemObj, "ssid");
+				dev.ssid = getJsonObjectString(itemObj, "ssidName");
+				dev.psw = getJsonObjectString(itemObj, "ssidPassword");
 				DeviceInfor.add(dev);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return DeviceInfor;
+	}
+
+	public static int getDownLoadPerCent(String jsonStr) {
+		int percent = 0;
+		try {
+			if (null != jsonStr) {
+				JSONObject jsonObj=new JSONObject(jsonStr);
+				int total = getJsonObjInt(jsonObj, "totalFileSize");
+				int index = getJsonObjInt(jsonObj, "downloadedFileSize");
+				percent = (index * 100) / total;
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return percent;
 	}
 
 	/**
@@ -188,6 +204,28 @@ public class JsonResolve {
 	}
 
 	/**
+	 * 获取通信请求的内容
+	 * 
+	 * @param response
+	 * @return
+	 */
+	public static String getTcpRequest(String response) {
+		String reContent = "";
+		try {
+			JSONObject json = new JSONObject(response);
+			if (null != json) {
+				reContent = getJsonObjectString(json,
+						ServiceConfig.TCP_SOCKET_REQUEST);
+			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return reContent;
+
+	}
+
+	/**
 	 * 获取通信返回的内容
 	 * 
 	 * @param response
@@ -200,7 +238,8 @@ public class JsonResolve {
 			if (null != response) {
 				JSONObject json = new JSONObject(response);
 				if (null != json) {
-					action = getJsonObjectString(json,ServiceConfig.TCP_SOCKET_ACTION);
+					action = getJsonObjectString(json,
+							ServiceConfig.TCP_SOCKET_ACTION);
 				}
 			}
 

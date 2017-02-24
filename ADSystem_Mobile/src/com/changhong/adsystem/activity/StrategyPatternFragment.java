@@ -113,7 +113,9 @@ public class StrategyPatternFragment extends BaseFragment {
 
 	private void initDevlist(View v) {
 		focusDev = (TextView) v.findViewById(R.id.title);
-		focusDev.setText(R.string.ab_dev_title + devList.get(curDevIndex).mac);
+		if(null != devList && devList.size()>0){
+		    focusDev.setText(R.string.ab_dev_title + devList.get(curDevIndex).mac);
+		}
 		mDeviceSelectAdapter = new DeviceSelectAdapter(mActivity, devList);
 		mdevSelectList.setAdapter(mDeviceSelectAdapter);
 		mdevSelectList.setOnItemClickListener(new OnItemClickListener() {

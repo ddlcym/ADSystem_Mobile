@@ -19,7 +19,6 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
 
 	protected Handler uiHander = null;
 	protected ProgressDialog mProgressDialog = null;
-    protected View mRootView=null;
     protected Activity mActivity =null; 
     protected HttpRequest mHttpRequest=null;
     protected P2PService  mP2PService=null;
@@ -38,15 +37,25 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        if (null == mRootView) {
-            mRootView = inflater.inflate(getLayoutId(), container, false);
-        }
+        View mRootView = inflater.inflate(getLayoutId(), container, false);
         initViewAndEvent(mRootView);
         return mRootView;
     }
 	
     
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+	}
+
 	
+
+	@Override
+	public void setArguments(Bundle args) {
+		// TODO Auto-generated method stub
+		super.setArguments(args);
+	}
 	
 
 	@Override
@@ -124,11 +133,6 @@ public abstract class BaseFragment extends Fragment implements OnClickListener {
 			   ((ADMainActivity)mActivity).showTabHost();	
 			}
 		}
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-	    //No call for super(). Bug on API Level > 11.
 	}
 	
 	

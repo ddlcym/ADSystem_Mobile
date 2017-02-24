@@ -55,9 +55,9 @@ public class DeviceSelectAdapter extends BaseAdapter {
             vh = (ViewHolder) convertView.getTag();
         }
 
-        String serverMac = devList.get(position).mac;
+        String tyyInfor = devList.get(position).ssid+";"+devList.get(position).psw;
 
-        vh.boxInfo.setText(ClientSendCommandService.getConnectBoxName(serverMac) +  " [" + serverMac + "]");
+        vh.boxInfo.setText("投影仪"+ " [" + tyyInfor + "]");
 
         return convertView;
     }

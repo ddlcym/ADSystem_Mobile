@@ -5,8 +5,9 @@ import java.io.Serializable;
 public class DeviceInfor implements Serializable{
 	public String id;//设备ID
 	public String mac;//设备mac地址
-	public String ssid;//设备SSID
-	
+	public String ssid;//热点SSID
+	public String psw;//热点密码
+
 	private String adResouseId ;//
 	private int appVersion;//
 	private long memoryAvailable;

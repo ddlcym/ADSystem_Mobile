@@ -29,6 +29,7 @@ import com.changhong.adsystem.p2p.UDPQuerySingleThread;
 import com.changhong.adsystem.utils.Configure;
 import com.changhong.adsystem_mobile.R;
 
+
 public class ADMainActivity extends FragmentActivity {
 
 	private VolleyTool volleyTool;
@@ -36,7 +37,7 @@ public class ADMainActivity extends FragmentActivity {
 	// 定义FragmentTabHost对象
 	private FragmentTabHost mTabHost;
 	// 定义数组来存放Fragment界面
-	private final Class[] fragmentArray = { CommunityFragment.class,
+	private static  Class[] fragmentArray = { CommunityFragment.class,
 			DeviceManagerF.class };
 	private Intent onHomeIntent; // home键退出后通过intent启动程序
 
@@ -98,15 +99,10 @@ public class ADMainActivity extends FragmentActivity {
 		String[] tabs = getResources().getStringArray(R.array.tabs);
 		for (int i = 0; i < tabs.length; i++) {
 			// 为每一个Tab按钮设置图标、文字和内容
-			TabSpec tabSpec = mTabHost.newTabSpec(tabs[i]).setIndicator(
-					getTabItemView(tabs[i]));
+			TabSpec tabSpec = mTabHost.newTabSpec(tabs[i]).setIndicator(getTabItemView(tabs[i]));
 			// 将Tab按钮添加进Tab选项卡中
-			mTabHost.addTab(tabSpec, fragmentArray[i], null);
-			// 设置Tab按钮的背景
-			mTabHost.getTabWidget().getChildAt(i)
-					.setBackgroundResource(R.drawable.tab_selector);
-		}
-		mTabHost.setCurrentTab(0);
+			mTabHost.addTab(tabSpec, fragmentArray[i], null);			
+		}     	
 	}
 
 	/**
@@ -116,6 +112,8 @@ public class ADMainActivity extends FragmentActivity {
 		View view = LayoutInflater.from(this).inflate(R.layout.tab_item, null);
 		TextView textView = (TextView) view.findViewById(R.id.textview);
 		textView.setText(txt);
+		// 设置Tab按钮的背景
+		view.setBackgroundResource(R.drawable.tab_selector);
 		return view;
 	}
 
@@ -127,22 +125,7 @@ public class ADMainActivity extends FragmentActivity {
 		mTabHost.getTabWidget().setVisibility(View.VISIBLE);
 	}
 
-	@Override
-	protected void onNewIntent(Intent intent) {
-		// 拦截Intent，保存Intent，在onResume中进行处理
-		onHomeIntent = intent;
-	}
 
-	@Override
-	public void onResume() {
-
-		if (onHomeIntent != null) { // home键退出后通过intent启动程序
-			// dosomething···
-			onHomeIntent = null;
-		}
-		super.onResume();
-	}
-	
 	
 
 	@Override

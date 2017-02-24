@@ -4,7 +4,6 @@ package com.changhong.adsystem.p2p;
  * TCPClient通讯 用于手机与盒子端通讯
  * 
  */
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -310,7 +309,10 @@ public class TCPClient {
 							if(action.equals(ServiceConfig.TCPS_ACTION_BEATS)){
 								deafultHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_RECEIVE_BEATS);
 							}else if(action.equals(ServiceConfig.TCPS_SERVER_FILEDOWNLOAD)){
-								deafultHandler.sendEmptyMessage(ServiceConfig.TCP_SOCKET_TYPE_RESPOND);	
+							  	Message respondMsg = deafultHandler.obtainMessage();
+								respondMsg.what = ServiceConfig.TCP_SOCKET_TYPE_RESPOND;
+								respondMsg.obj = JsonResolve.getTcpRequest(revStr);
+								respondMsg.sendToTarget();
 							}
 						}
 					}

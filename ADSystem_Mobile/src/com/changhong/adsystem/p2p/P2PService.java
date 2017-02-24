@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.changhong.adsystem.activity.MyApp;
 import com.changhong.adsystem.model.JsonPackage;
+import com.changhong.adsystem.model.JsonResolve;
 import com.changhong.adsystem.utils.ServiceConfig;
 import com.changhong.adsystem_mobile.R;
 
@@ -152,9 +153,9 @@ public class P2PService {
 										.sendMsgToByte(ServiceConfig.TCPS_ACTION_BEATS));
 						break;
 					case ServiceConfig.TCP_SOCKET_TYPE_RESPOND:
-						String action = (String) msg.obj;
-						if (action
-								.equals(ServiceConfig.TCPS_SERVER_FILEDOWNLOAD_FINISHED)) {
+						String result = (String) msg.obj;
+						int percent=JsonResolve.getDownLoadPerCent(result);						
+						if (percent >= 100) {
 							Toast.makeText(MyApp.getContext(),
 									R.string.ad_res_download_finished,
 									Toast.LENGTH_SHORT).show();
