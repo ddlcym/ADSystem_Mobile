@@ -83,7 +83,15 @@ public class TCPClient {
 					deafultHandler = handler;
 					Log.i(TAG,
 							"-------------------p2p_Socket connect success-------------------------");
+				}else{
+					Log.i(TAG,
+							"-------------------p2p_Socket connect failed-------------------------");
+			
 				}
+			}else{
+				Log.i(TAG,
+						"-------------------curServerIP is null-------------------------");
+			
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
