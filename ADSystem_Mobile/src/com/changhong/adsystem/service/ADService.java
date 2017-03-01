@@ -64,6 +64,7 @@ public class ADService extends Service {
 			// TODO Auto-generated method stub
 			switch (msg.what) {
 			case Configure.UDPQueryTimeOut:
+				Log.i("mmmm", "ADMainActivity-UDPQueryTimeOut");
 				udpQureyFlag = true;
 				Toast.makeText(MyApp.getContext(), "未发现设备", Toast.LENGTH_SHORT)
 						.show();
@@ -71,6 +72,7 @@ public class ADService extends Service {
 				break;
 			case Configure.UDPQuerySuccess:
 				udpQureyFlag = true;
+				Log.i("mmmm", "ADMainActivity-UDPQuerySuccess");
 				P2PService.creatP2PService().creatTcpConnect();
 				break;
 			case Configure.WifiClosed:
@@ -90,6 +92,7 @@ public class ADService extends Service {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
+			Log.i("mmmm", "wifiReceiver:action="+intent.getAction());
 			if (intent.getAction().equals(WifiManager.RSSI_CHANGED_ACTION)) {
 				// signal strength changed
 			} else if (intent.getAction().equals(
@@ -136,6 +139,7 @@ public class ADService extends Service {
 		if (intentFilter == null) {
 			intentFilter = new IntentFilter();// 创建Intent对象
 			intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+			intentFilter.addAction(WifiManager.EXTRA_WIFI_STATE);
 		}
 		getApplicationContext().registerReceiver(wifiReceiver, intentFilter);// 注册BroadcastReceiver
 	}
