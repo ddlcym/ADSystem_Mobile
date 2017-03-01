@@ -21,7 +21,7 @@ public class ImageHttpDownloader {
 
     public static final int DEFAULT_HTTP_READ_TIMEOUT = 20 * 1000;
 
-    private static final int MUTI_THREAD_SIZE_POINT = 1024 * 1024 * 2; //2M
+    private static final int MUTI_THREAD_SIZE_POINT = 1024 * 1024 * 5; //2M
 
     private static final int BUFFER_SIZE = 32 * 1024; //32K
 

@@ -94,11 +94,12 @@ public class RequestURL {
 		request.put(HandleResponse.APP_TYPE, "ANDROID");
 		request.put(HandleResponse.APP_VERSION, "1.0");
 		request.put(HandleResponse.REQUEST_MAC, mac);
-//
-//		JSONObject body = new JSONObject();
+
+		JSONObject body = new JSONObject();
 //		body.put("mac", mac);
-//		request.put(HandleResponse.REQUEST_BODY,
-//				AesUtils.fixEncrypt(body.toJSONString()));
+		request.put(HandleResponse.REQUEST_BODY,
+				AesUtils.fixEncrypt(body.toJSONString()));
+
 
 		return requestADConfURL + request.toJSONString();
 	}

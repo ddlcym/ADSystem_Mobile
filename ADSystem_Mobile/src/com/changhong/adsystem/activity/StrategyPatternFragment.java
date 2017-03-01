@@ -125,8 +125,10 @@ public class StrategyPatternFragment extends BaseFragment {
 					long arg3) {
 				mDeviceSelectAdapter.notifyDataSetChanged();
 				curDevIndex = arg2;
-				focusDev.setText(devList.get(curDevIndex).mac);
+				String curMac = getDeviceMac();
+				focusDev.setText(curMac);
 				mdevSelectList.setVisibility(View.GONE);
+				requestStrategy(curMac);
 			}
 		});
 		v.findViewById(R.id.btn_list).setOnClickListener(this);
@@ -184,6 +186,7 @@ public class StrategyPatternFragment extends BaseFragment {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_commit:// 上传数据
+			MyApplication.vibrator.vibrate(100);
 			String conf=JsonPackage.getDownLoadConf();
 			if(null != conf){
 				mP2PService.communicationWithBox(uiHander, ServiceConfig.TCPS_ACTION_DOWNLOADCONF_CODE, conf);
@@ -192,6 +195,7 @@ public class StrategyPatternFragment extends BaseFragment {
 			}
 			break;
 		case R.id.btn_update://下载广告资源文件	
+			MyApplication.vibrator.vibrate(100);
 			downLoadADRes();
 			break;
 		case R.id.btn_list:// 显示列表
