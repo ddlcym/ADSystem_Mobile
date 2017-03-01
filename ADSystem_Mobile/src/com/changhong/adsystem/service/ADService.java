@@ -65,13 +65,13 @@ public class ADService extends Service {
 			switch (msg.what) {
 			case Configure.UDPQueryTimeOut:
 				Log.i("mmmm", "ADMainActivity-UDPQueryTimeOut");
-				udpQureyFlag = true;
+				udpQureyFlag = false;
 				Toast.makeText(MyApp.getContext(), "未发现设备", Toast.LENGTH_SHORT)
 						.show();
 				P2PService.creatP2PService().close();
 				break;
 			case Configure.UDPQuerySuccess:
-				udpQureyFlag = true;
+				udpQureyFlag = false;
 				Log.i("mmmm", "ADMainActivity-UDPQuerySuccess");
 				P2PService.creatP2PService().creatTcpConnect();
 				break;
